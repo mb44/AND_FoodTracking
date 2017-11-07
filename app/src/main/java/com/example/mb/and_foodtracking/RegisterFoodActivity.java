@@ -20,9 +20,9 @@ public class RegisterFoodActivity extends AppCompatActivity {
         FoodTemplate food2 = new FoodTemplate("Pig", "3 week", R.drawable.pig);
         FoodTemplate food3 = new FoodTemplate("Vegetables", "1 week", R.drawable.vegetables);
 
-        FoodTemplate food4 = new FoodTemplate("Milk", "1 week", -1);
-        FoodTemplate food5 = new FoodTemplate("Cashew Nuts", "2 week", -1);
-        FoodTemplate food6 = new FoodTemplate("Sugar", "60 week", -1);
+        FoodTemplate food4 = new FoodTemplate("Milk", "1 week", R.drawable.milk);
+        FoodTemplate food5 = new FoodTemplate("Cashew Nuts", "2 week", R.drawable.cashew);
+        FoodTemplate food6 = new FoodTemplate("Sugar", "60 week", R.drawable.sugar);
 
         foodTemplates = new ArrayList<>();
         foodTemplates.add(food1);
