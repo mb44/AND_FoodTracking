@@ -8,7 +8,7 @@ public class Food {
     private String name;
     private String regDate;
     private String expDate;
-    
+
     public Food(String name, String regDate, String expDate) {
         this.name = name;
         this.regDate = regDate;
