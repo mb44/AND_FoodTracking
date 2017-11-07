@@ -8,13 +8,36 @@
 
     <TextView
         android:id="@+id/mainFoodTackTextView"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addDateButton"
+        android:onClick="addDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Add Date"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/ClearTagButton"
+        tools:layout_editor_absoluteY="121dp" />
+
+    <Button
+        android:id="@+id/ClearTagButton"
+        android:onClick="clearTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="82dp"
+        android:text="Clear Tag"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="121dp" />
 
 </android.support.constraint.ConstraintLayout>
 

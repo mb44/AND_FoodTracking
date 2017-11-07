@@ -8,12 +8,17 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.nfc.tech.MifareUltralight;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcF;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,23 +28,31 @@ import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static android.R.attr.tag;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static android.nfc.NfcAdapter.ACTION_TECH_DISCOVERED;
 import static android.os.Build.VERSION_CODES.N;
 
 public class MainActivity extends AppCompatActivity {
 
+
     NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
     IntentFilter[] intentFiltersArray;
     String[][] techListArray;
+    Boolean isWriting = false;
+    Boolean isClearing = false;
 
     Intent intent;
     TextView mainTextView;
     Tag detectedTag;
     private static final String TAG = "detteerdebug";
+    private static final String EMPTY_TAG_STRING = "This is an empty food tag";
+    private String  uniqueID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException("fail", e);
         }
         intentFiltersArray = new IntentFilter[]{ndef, /*ndef2*/ };
-        techListArray = new String[][] {new String[]{NfcF.class.getName()}};
+        techListArray = new String[][] {new String[]{MifareUltralight.class.getName()}};
 
         mainTextView =(TextView) findViewById(R.id.mainFoodTackTextView);
         detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
@@ -71,16 +84,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //readNFC(getIntent());                                                            // read the content on the NFC tag
+       //readNFC(getIntent());                                                            // read the content on the NFC tag
 
-        /*
-        try {
-            writeToNFC(("The current date and time is:\n " +currentDateString()), detectedTag);  // whrite or overwrite the content on the NFC tag
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(MainActivity.this,"Fail to write", Toast.LENGTH_LONG).show();
-        }
-        */
+        Log.d(TAG,"This is the on onStart");
+
+
     }
 
     @Override
@@ -104,7 +112,45 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         Log.d(TAG,"This is the onNewIntent");
 
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
+            setNewDate(tag);
+        }
+        else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null)
+        {
+            eraseTag(tag);
+        }
+
+
+
         readNFC(intent);
+    }
+
+    private void setNewDate(Tag tag)
+    {
+
+            try {
+                writeToNFC("The current date and time is:\n " +currentDateString()+ "\n unique ID: "+generateUniqueId()+"\n", tag);  // whrite or overwrite the content on the NFC tag
+                Toast.makeText(MainActivity.this,"write successful", Toast.LENGTH_LONG).show();
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this,"Fail to write", Toast.LENGTH_LONG).show();
+            }
+            isWriting = false;
+
+    }
+
+    private void eraseTag(Tag tag)
+    {
+        try {
+            writeToNFC(EMPTY_TAG_STRING, tag);  // whrite or overwrite the content on the NFC tag
+            Toast.makeText(MainActivity.this,"erase successful", Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(MainActivity.this,"Fail to erase", Toast.LENGTH_LONG).show();
+        }
+        isClearing = false;
     }
 
     public void readNFC(Intent intent) {
@@ -138,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     public void writeToNFC(String text, Tag tag) throws IOException, FormatException{
         NdefRecord[] records = {createRecord(text)};
         NdefMessage message = new NdefMessage(records);
@@ -166,4 +213,28 @@ public class MainActivity extends AppCompatActivity {
         String currentDate = Calendar.getInstance().getTime().toString();
         return currentDate;
     }
+
+    private String generateUniqueId()
+    {
+        return uniqueID = UUID.randomUUID().toString();// unique id generator
+    }
+
+    public void clearTag (View v)
+    {
+        isClearing = true;
+        isWriting = false;
+        Toast.makeText(MainActivity.this,"The clear tag is clicked",Toast.LENGTH_LONG).show();
+
+        Log.d(TAG,"This is the clear tag");
+    }
+
+    public void addDate (View v)
+    {
+        isWriting = true;
+        isClearing = false;
+        Toast.makeText(MainActivity.this,"The add date tag is clicked",Toast.LENGTH_LONG).show();
+        Log.d(TAG, currentDateString());
+    }
+
+
 }
