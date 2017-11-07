@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static com.example.mb.and_foodtracking.R.id.textView;
+
 /**
  * Created by Mb on 07-11-2017.
  */
@@ -35,11 +37,10 @@ public class FoodTemplateAdapter extends ArrayAdapter<FoodTemplate>
         TextView textView = (TextView)gridItemView.findViewById(R.id.item_text);
         textView.setText(currentFood.getName() + "\n");
 
-        ImageView imgView = (ImageView)gridItemView.findViewById(R.id.item_icon);
-
         int imgResourceId = currentFood.getImgResourceId();
 
         if (imgResourceId != -1) {
+            ImageView imgView = (ImageView)gridItemView.findViewById(R.id.item_icon);
             imgView.setImageResource(currentFood.getImgResourceId());
         }
 
