@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="180dp"
+    android:orientation="vertical"
     android:background="@android:color/holo_blue_light"
+    android:layout_width="160dp"
     android:layout_height="200dp">
+
     <TextView
         android:id="@+id/item_text"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:padding="2dp"
+        android:padding="4dp"
         />
 
     <ImageView
         android:id="@+id/item_icon"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:padding="2dp"
+        android:padding="4dp"
         />
 </LinearLayout>
