@@ -74,13 +74,32 @@ public class MainActivity extends AppCompatActivity {
         detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
 
         Button registerFoodButton = (Button)findViewById(R.id.registerFoodButton);
-
         registerFoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent registerFoodIntent = new Intent(MainActivity.this, RegisterFoodActivity.class);
 
                 startActivity(registerFoodIntent);
+            }
+        });
+
+        Button unregisterFoodButton = (Button)findViewById(R.id.unregisterFoodButton);
+        unregisterFoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent unregisterFoodIntent = new Intent(MainActivity.this, UnregisterFoodActivity.class);
+
+                startActivity(unregisterFoodIntent);
+            }
+        });
+
+        Button statusButton = (Button)findViewById(R.id.statusButton);
+        statusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent statusIntent = new Intent(MainActivity.this, StatusActivity.class);
+
+                startActivity(statusIntent);
             }
         });
     }
