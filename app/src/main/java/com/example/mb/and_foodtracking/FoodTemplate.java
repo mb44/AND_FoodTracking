@@ -1,9 +1,5 @@
 package com.example.mb.and_foodtracking;
 
-/**
- * Created by Mb on 07-11-2017.
- */
-
 public class FoodTemplate {
     private String name;
     private String duration;
