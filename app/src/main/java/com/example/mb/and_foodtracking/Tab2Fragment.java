@@ -1,5 +1,7 @@
 package com.example.mb.and_foodtracking;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,8 @@ public class Tab2Fragment extends Fragment {
     private ArrayList<FoodTemplate>foodTemplates;
     private FoodTemplateAdapter arrayAdapter;
     private GridView gridView;
+
+    private Activity context;
 
     @Nullable
     @Override
@@ -44,14 +48,13 @@ public class Tab2Fragment extends Fragment {
         foodTemplates.add(food6);
 
         /*
-        MainActivity context = (MainActivity)getActivity();
+        context = getActivity();
         arrayAdapter = new FoodTemplateAdapter(context, foodTemplates);
 
         gridView = (GridView)context.findViewById(R.id.food_template_view);
         gridView.setNumColumns(2);
         gridView.setAdapter(arrayAdapter);
-        */
-
+            */
         return view;
     }
 }
