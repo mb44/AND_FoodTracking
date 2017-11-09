@@ -3,6 +3,7 @@ package com.example.mb.and_foodtracking;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -36,6 +37,7 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static android.nfc.NfcAdapter.ACTION_TECH_DISCOVERED;
 import static android.os.Build.VERSION_CODES.N;
+import static com.example.mb.and_foodtracking.R.id.writeTagTextView;
 
 public class MainActivity extends AppCompatActivity {
     private NfcAdapter nfcAdapter;
@@ -48,14 +50,15 @@ public class MainActivity extends AppCompatActivity {
     private Intent intent;
     private TextView mainTextView;
     private Tag detectedTag;
-    private static final String TAG = "detteerdebug";
+    private static final String TAG = "This_is_debug";
     private static final String EMPTY_TAG_STRING = "This is an empty food tag";
     private String  uniqueID;
+    private Tag tag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"This is the on create");
+
         setContentView(R.layout.activity_main);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
@@ -70,15 +73,13 @@ public class MainActivity extends AppCompatActivity {
         intentFiltersArray = new IntentFilter[]{ndef, /*ndef2*/ };
         techListArray = new String[][] {new String[]{MifareUltralight.class.getName()}};
 
-        mainTextView =(TextView) findViewById(R.id.mainFoodTackTextView);
         detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
 
-        Button registerFoodButton = (Button)findViewById(R.id.registerFoodButton);
+        final Button registerFoodButton = (Button)findViewById(R.id.registerFoodButton);
         registerFoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent registerFoodIntent = new Intent(MainActivity.this, RegisterFoodActivity.class);
-
                 startActivity(registerFoodIntent);
             }
         });
@@ -102,13 +103,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(statusIntent);
             }
         });
+
+        SharedPreferences settings = getSharedPreferences("pref_file", MODE_PRIVATE);
+        isWriting = settings.getBoolean("isWriting", false);
+        if (isWriting) {
+            setNewDate();
+            SharedPreferences.Editor editor = settings.edit();
+
+            editor.putBoolean("isWriting", false);
+            // Commit the edits!
+            editor.commit();
+            Toast.makeText(MainActivity.this,"Wrote tag!", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-       //readNFC(getIntent());                                                            // read the content on the NFC tag
-
         Log.d(TAG,"This is the on onStart");
     }
 
@@ -118,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"This is the on Resume");
 
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListArray);
+
+
     }
 
     @Override
@@ -133,21 +146,23 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         Log.d(TAG,"This is the onNewIntent");
 
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
+        /*
         if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
-            setNewDate(tag);
+            setNewDate();
         } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
-            eraseTag(tag);
+            eraseTag();
         } else {
             readNFC(intent);
         }
+        */
     }
 
-    private void setNewDate(Tag tag)
+    private void setNewDate()
     {
         try {
-            writeToNFC("The current date and time is:\n " +currentDateString()+ "\n unique ID: "+generateUniqueId()+"\n", tag);  // whrite or overwrite the content on the NFC tag
+            writeToNFC("The current date and time is:\n " +currentDateString()+ "\n unique ID: "+generateUniqueId()+"\n");  // whrite or overwrite the content on the NFC tag
             Toast.makeText(MainActivity.this,"write successful", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,10 +171,10 @@ public class MainActivity extends AppCompatActivity {
         isWriting = false;
     }
 
-    private void eraseTag(Tag tag)
+    private void eraseTag()
     {
         try {
-            writeToNFC(EMPTY_TAG_STRING, tag);  // whrite or overwrite the content on the NFC tag
+            writeToNFC(EMPTY_TAG_STRING);  // whrite or overwrite the content on the NFC tag
             Toast.makeText(MainActivity.this,"erase successful", Toast.LENGTH_LONG).show();
         }catch (Exception e) {
             e.printStackTrace();
@@ -199,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void writeToNFC(String text, Tag tag) throws IOException, FormatException{
+    public void writeToNFC(String text) throws IOException, FormatException{
         NdefRecord[] records = {createRecord(text)};
         NdefMessage message = new NdefMessage(records);
         Ndef ndef = Ndef.get(tag);
