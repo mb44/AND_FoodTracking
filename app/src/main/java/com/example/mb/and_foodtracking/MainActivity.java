@@ -49,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
     {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new Tab1Fragment(), "TAB1");
-        adapter.addFragment(new Tab2Fragment(), "TAB2");
-        adapter.addFragment(new Tab3Fragment(), "TAB3");
+        adapter.addFragment(new Tab1Fragment(), "Menu");
+        adapter.addFragment(new Tab2Fragment(), "Register food");
+        adapter.addFragment(new Tab3Fragment(), "Unregister food");
         viewPager.setAdapter(adapter);
     }
 }
