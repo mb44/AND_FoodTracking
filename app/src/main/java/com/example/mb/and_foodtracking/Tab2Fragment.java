@@ -47,14 +47,13 @@ public class Tab2Fragment extends Fragment {
         foodTemplates.add(food5);
         foodTemplates.add(food6);
 
-        /*
-        context = getActivity();
+       // MainActivity main = (MainActivity) getActivity();
+        MainActivity context = (MainActivity) getActivity();
         arrayAdapter = new FoodTemplateAdapter(context, foodTemplates);
 
-        gridView = (GridView)context.findViewById(R.id.food_template_view);
+        gridView = (GridView)view.findViewById(R.id.foodTemplateView);
         gridView.setNumColumns(2);
         gridView.setAdapter(arrayAdapter);
-            */
         return view;
     }
 }
