@@ -14,4 +14,18 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp" />
 
+    <!--
+    <Button
+        android:id="@+id/addDateButton"
+        android:onClick="addDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Add Date"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="19dp"
+        android:layout_alignTop="@+id/foodTemplateView"
+        android:layout_alignStart="@+id/foodTemplateView" />
+    -->
 </RelativeLayout>

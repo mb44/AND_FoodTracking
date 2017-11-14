@@ -21,4 +21,19 @@
         android:text="TESTBTN 3"
         />
 
+
+
+    <!--
+    <Button
+        android:id="@+id/clearTagButton"
+        android:onClick="clearTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="82dp"
+        android:text="Clear Tag"
+        android:layout_below="@+id/textTab3"
+        android:layout_alignParentStart="true" />
+    -->
+
+
 </RelativeLayout>
