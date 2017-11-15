@@ -1,36 +1,57 @@
 package com.example.mb.and_foodtracking;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.GridView;
+import android.widget.RelativeLayout;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+
+import static android.content.Context.MODE_PRIVATE;
+import static android.media.CamcorderProfile.get;
 
 public class Tab2Fragment extends Fragment {
-    private static final String TAG = "Tab2Fragment";
+    private static String TAG = "Tab2Fragment";
 
+    private MainActivity context;
     private Button btnTEST;
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
 
     private ArrayList<FoodTemplate>foodTemplates;
     private FoodTemplateAdapter arrayAdapter;
+
+    private RelativeLayout setDateLayout;
+    private RelativeLayout approachNFCLayout;
+
     private GridView gridView;
+    private Button okButton;
+    private Button cancelButton;
+    private Button cancelNFCButton;
+    private int expYear;
+    private int expMonth;
+    private int expDate;
 
-    private Activity context;
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab2_fragment,container,false);
-
         FoodTemplate food1 = new FoodTemplate("Cow", "2 week", R.drawable.cow);
         FoodTemplate food2 = new FoodTemplate("Pig", "3 week", R.drawable.pig);
         FoodTemplate food3 = new FoodTemplate("Vegetables", "1 week", R.drawable.vegetables);
@@ -48,12 +69,89 @@ public class Tab2Fragment extends Fragment {
         foodTemplates.add(food6);
 
        // MainActivity main = (MainActivity) getActivity();
-        MainActivity context = (MainActivity) getActivity();
+        context = (MainActivity) getActivity();
+
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        settings = context.getSharedPreferences(getString(R.string.settings_filename), MODE_PRIVATE);
+
         arrayAdapter = new FoodTemplateAdapter(context, foodTemplates);
 
         gridView = (GridView)view.findViewById(R.id.foodTemplateView);
         gridView.setNumColumns(2);
         gridView.setAdapter(arrayAdapter);
+        //gridView.setAlpha(0.25f);
+
+        setDateLayout = (RelativeLayout)view.findViewById(R.id.setExpDateLayout);
+        approachNFCLayout = (RelativeLayout)view.findViewById(R.id.approachNFCLayout);
+
+        final DatePicker datePicker = (DatePicker)view.findViewById(R.id.datePicker);
+
+        final Calendar c = Calendar.getInstance();
+        datePicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE),
+            new DatePicker.OnDateChangedListener() {
+                @Override
+                public void onDateChanged(DatePicker datePicker, int year, int month, int date) {
+                    //Toast.makeText(context, "Date: " + date, Toast.LENGTH_SHORT).show();
+                    expYear = year;
+                    expMonth = month+1;
+                    expDate = date;
+                }
+        });
+
+        //final TextView appoachTextView = (TextView)view.findViewById(R.id.approach_textview);
+
+        // Set listener on GridView
+        gridView.setOnItemClickListener( new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long postition) {
+                //FoodTemplate ft = (FoodTemplate)parent.getItemAtPosition(position);
+                gridView.setAlpha(0.3f);
+                setDateLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Set Listener on Write NFC Tag Button
+        okButton = (Button)view.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editor = settings.edit();
+                editor.putInt(getString(R.string.settings_expYear), expYear);
+                editor.putInt(getString(R.string.settings_expMonth), expMonth);
+                editor.putInt(getString(R.string.settings_expDate), expDate);
+                editor.putBoolean(getString(R.string.settings_isWriting), true);
+                editor.commit();
+                setDateLayout.setAlpha(0.3f);
+                approachNFCLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        cancelButton = (Button)view.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
+                setDateLayout.setVisibility(View.GONE);
+                gridView.setAlpha(1);
+            }
+        });
+
+        cancelNFCButton = (Button)view.findViewById(R.id.cancelNFCButton);
+        cancelNFCButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editor = settings.edit();
+                editor.putBoolean("isWriting", false);
+                editor.commit();
+
+                approachNFCLayout.setVisibility(View.GONE);
+                setDateLayout.setVisibility(View.GONE);
+                setDateLayout.setAlpha(1);
+                gridView.setAlpha(1);
+            }
+        });
+
         return view;
     }
 }

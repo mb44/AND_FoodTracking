@@ -3,6 +3,7 @@ package com.example.mb.and_foodtracking;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -13,6 +14,7 @@ import android.nfc.tech.Ndef;
 import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
@@ -28,29 +30,29 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
 
-import static com.example.mb.and_foodtracking.R.id.textTab1;
-
-
-//import static com.example.mb.and_foodtracking.R.id.food_template_view;
+import static android.graphics.PorterDuff.Mode.CLEAR;
+import static android.os.Build.VERSION_CODES.M;
+import static com.example.mb.and_foodtracking.R.id.statusTextView;
 
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String TAG = "MainActivity";
     private SectionsPageAdapter mSectionsPageAdapter;
     private ViewPager mViewPager;
-    NfcAdapter nfcAdapter;
-    PendingIntent pendingIntent;
-    IntentFilter[] intentFiltersArray;
-    String[][] techListArray;
-    Boolean isWriting = false;
-    Boolean isClearing = false;
+    private NfcAdapter nfcAdapter;
+    private PendingIntent pendingIntent;
+    private IntentFilter[] intentFiltersArray;
+    private String[][] techListArray;
 
-    Intent intent;
-    TextView mainTextView;
-    Tag detectedTag;
+    private boolean isWriting;
+    private boolean isClearing;
+
+    private TextView statusTextView;
+    private Tag detectedTag;
     private static final String EMPTY_TAG_STRING = "This is an empty food tag";
     private String uniqueID;
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +60,22 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting.");
         setContentView(R.layout.activity_main);
         initUserInterface();
+
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        settings = getSharedPreferences(getString(R.string.settings_filename), MODE_PRIVATE);
+        editor = settings.edit();
+        editor.putBoolean(getString(R.string.settings_isWriting), false);
+        editor.putBoolean(getString(R.string.settings_isReading), false);
+        editor.putBoolean(getString(R.string.settings_isClearing), false);
+        editor.commit();
+
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 
         detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
-
 
         try {
             ndef.addDataType("*/*");
@@ -80,11 +91,41 @@ public class MainActivity extends AppCompatActivity {
 
     private void  setupViewPager(ViewPager viewPager)
     {
-        //SectionsPageAdapter adapter = new SectionsPageAdapter(this, getSupportFragmentManager());
         mSectionsPageAdapter.addFragment(new Tab1Fragment(), "Menu");
         mSectionsPageAdapter.addFragment(new Tab2Fragment(), "Register food");
         mSectionsPageAdapter.addFragment(new Tab3Fragment(), "Unregister food");
         viewPager.setAdapter(mSectionsPageAdapter);
+    }
+
+    private void initUserInterface()
+    {
+        //mainTextView = (TextView) findViewById(R.id.textTab1);
+        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
+
+        // set up the ViewPager with the sections adapter
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        setupViewPager(mViewPager);
+        statusTextView = (TextView)findViewById(R.id.statusTextView);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                if (tab.getPosition()==2) {
+                    Toast.makeText(MainActivity.this, "HEEEERE", Toast.LENGTH_LONG).show();
+                    editor.putBoolean(getString(R.string.settings_isClearing), true);
+                } /*else {
+                    editor.putBoolean(getString(R.string.settings_isClearing), false);
+                }*/
+                editor.commit();
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                super.onTabUnselected(tab);
+            }
+        });
     }
 
     @Override
@@ -106,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG,"state: onResume");
+        //Toast.makeText(this, "onResume", Toast.LENGTH_LONG).show();
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListArray);
     }
 
@@ -115,66 +157,56 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"state: onNewIntent");
         initUserInterface();
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        Toast.makeText(this,"On new intent", Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"On new intent", Toast.LENGTH_SHORT).show();
 
-        try {
-            writeToNFC("det er en abe", tag);
-            Toast.makeText(MainActivity.this,"write successful", Toast.LENGTH_LONG).show();
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(MainActivity.this,"Fail to write", Toast.LENGTH_LONG).show();
-        }
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_filename), MODE_PRIVATE);
+        isWriting = settings.getBoolean(getString(R.string.settings_isWriting), false);
+        isClearing = settings.getBoolean(getString(R.string.settings_isClearing), false);
 
-/*
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        Toast.makeText(this,"isClearing: " + isClearing, Toast.LENGTH_SHORT).show();
 
-        if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null)
-        {
-            setNewDate(tag);
-        }
-        else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null)
-        {
+        if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
+            int year = settings.getInt(getString(R.string.settings_expYear), 1970);
+            int month = settings.getInt(getString(R.string.settings_expMonth), 1);
+            int date = settings.getInt(getString(R.string.settings_expDate), 1);
+            //Toast.makeText(MainActivity.this, "" +date, Toast.LENGTH_LONG).show();
+            setNewDate(tag, year, month, date);
+        } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
             eraseTag(tag);
         }
-
         readNFC(intent);
-*/
+        editor = settings.edit();
+        editor.putBoolean(getString(R.string.settings_isWriting), false);
+        editor.putBoolean(getString(R.string.settings_isReading), false);
+        editor.putBoolean(getString(R.string.settings_isClearing), false);
+        editor.commit();
     }
 
-    private void setNewDate(Tag tag)
-    {
+    private void setNewDate(Tag tag, int year, int month, int date) {
         try {
-            writeToNFC("The current date and time is:\n " +currentDateString()+ "\n unique ID: "+generateUniqueId()+"\n", tag);  // whrite or overwrite the content on the NFC tag
-            Toast.makeText(MainActivity.this,"write successful", Toast.LENGTH_LONG).show();
-        }catch (Exception e){
+            // write or overwrite the content on the NFC tag
+            writeToNFC("Expiry date: " + year + "/" + month + "/" + date + "\nTag ID: "+generateUniqueId()+"\n", tag);
+            Toast.makeText(MainActivity.this,"Successfully wrote tag", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(MainActivity.this,"Fail to write", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this,"Failed to write tag", Toast.LENGTH_LONG).show();
         }
-        isWriting = false;
-
     }
 
     private void eraseTag(Tag tag)
     {
         try {
-            writeToNFC(EMPTY_TAG_STRING, tag);  // whrite or overwrite the content on the NFC tag
-            Toast.makeText(MainActivity.this,"erase successful", Toast.LENGTH_LONG).show();
-        }catch (Exception e){
+            // write or overwrite the content on the NFC tag
+            writeToNFC(EMPTY_TAG_STRING, tag);
+            Toast.makeText(MainActivity.this,"Successfully erased tag", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(MainActivity.this,"Fail to erase", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this,"Failed to erase tag", Toast.LENGTH_LONG).show();
         }
-        isClearing = false;
     }
 
-
     public void readNFC(Intent intent) {
-
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-            mainTextView.setText("Empty NFCtag is discovered");
-        }
-
-        else if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             Parcelable[] rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
             for (Parcelable rawMessage : rawMessages) {
@@ -188,37 +220,18 @@ public class MainActivity extends AppCompatActivity {
                         int languageCodeLength = payload[0] & 0063;
                         try {
                             String tagText = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
-                            //mainTextView.setText(tagText); // toDo: show the text
-                            Toast.makeText(this, tagText, Toast.LENGTH_LONG).show();
+                            statusTextView.setText(tagText);
+                            //Toast.makeText(this, tagText, Toast.LENGTH_LONG).show();
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
+        } else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
+            //mainTextView.setText("Empty NFCtag is discovered");
+            statusTextView.setText("Empty NFC Tag discovered");
         }
-    }
-
-
-    private void setupNFC()
-    {
-
-    }
-
-    private void initUserInterface()
-    {
-        mainTextView = (TextView) findViewById(R.id.textTab1);
-        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-
-        //mSectionsPageAdapter = new SectionsPageAdapter(this, getSupportFragmentManager());
-
-
-        // set up the ViewPager with the sections adapter
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        setupViewPager(mViewPager);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
     }
 
     public void writeToNFC(String text, Tag tag) throws IOException, FormatException {
@@ -264,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"This is the clear tag");
     }
 
+    /*
     public void addDate (View v)
     {
         isWriting = true;
@@ -271,4 +285,5 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this,"The add date tag is clicked",Toast.LENGTH_LONG).show();
         Log.d(TAG, currentDateString());
     }
+    */
 }

@@ -1,5 +1,16 @@
 <resources>
     <string name="app_name">TabFragment</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="settings_filename">foodtracking-settings</string>
+    <string name="settings_isWriting">isWriting</string>
+    <string name="settings_isReading">isReading</string>
+    <string name="settings_isClearing">isClearing</string>
+    <string name="settings_expYear">expYear</string>
+    <string name="settings_expMonth">expMonth</string>
+    <string name="settings_expDate">expDate</string>
+
+    <string-array name="sort_spinner_items">
+        <item>Expiry date</item>
+        <item>Food type</item>
+    </string-array>
 </resources>
