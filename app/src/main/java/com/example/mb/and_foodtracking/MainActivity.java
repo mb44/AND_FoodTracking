@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 if (tab.getPosition()==2) {
-                    Toast.makeText(MainActivity.this, "HEEEERE", Toast.LENGTH_LONG).show();
                     editor.putBoolean(getString(R.string.settings_isClearing), true);
                 } /*else {
                     editor.putBoolean(getString(R.string.settings_isClearing), false);
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         isWriting = settings.getBoolean(getString(R.string.settings_isWriting), false);
         isClearing = settings.getBoolean(getString(R.string.settings_isClearing), false);
 
-        Toast.makeText(this,"isClearing: " + isClearing, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"isClearing: " + isClearing, Toast.LENGTH_SHORT).show();
 
         if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
             int year = settings.getInt(getString(R.string.settings_expYear), 1970);
