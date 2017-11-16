@@ -12,23 +12,34 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
 
     private MainActivity context;
     private RelativeLayout frontPageLayout;
     private RelativeLayout foodStatusLayout;
-
     private Button showfoodStatusButton;
     private Button closeFoodStatusButton;
-
     private Spinner sortSpinner;
+
+    //private FirebaseDatabase database;
+    //private DatabaseReference dbRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab1_fragment,container,false);
 
         context = (MainActivity) getActivity();
+
+        /*
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // Get the reference
+        final DatabaseReference dbRef = database.getReference("messages");
+        dbRef.push().setValue("Hello FoodTrack :)");
+        */
 
         frontPageLayout = (RelativeLayout)view.findViewById(R.id.frontpageLayout);
         foodStatusLayout = (RelativeLayout)view.findViewById(R.id.foodStatusLayout);

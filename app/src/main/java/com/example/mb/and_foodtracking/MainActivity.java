@@ -24,6 +24,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -60,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting.");
         setContentView(R.layout.activity_main);
         initUserInterface();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+        myRef.setValue("Hello, World!");
+
+        /*
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // Get the reference
+        final DatabaseReference dbRef = database.getReference("messages");
+        dbRef.push().setValue("Hello FoodTrack");
+        */
 
         // We need an Editor object to make preference changes.
         // All objects are from android.context.Context
