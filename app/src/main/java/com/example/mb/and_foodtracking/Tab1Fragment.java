@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
+import com.example.mb.and_foodtracking.arrayadapters.FoodItemAdapter;
 import com.example.mb.and_foodtracking.model.FoodItem;
 import com.example.mb.and_foodtracking.model.FoodType;
 import com.google.firebase.database.DataSnapshot;
@@ -44,16 +44,9 @@ public class Tab1Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab1_fragment,container,false);
-
+        // Get MainActivity context
         context = (MainActivity) getActivity();
-
-        /*
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        // Get the reference
-        final DatabaseReference dbRef = database.getReference("messages");
-        dbRef.push().setValue("Hello FoodTrack :)");
-        */
-
+        // Get references to layouts
         frontPageLayout = (RelativeLayout)view.findViewById(R.id.frontpageLayout);
         foodStatusLayout = (RelativeLayout)view.findViewById(R.id.foodStatusLayout);
 
@@ -73,12 +66,12 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
+        // Add sort functionality
         sortSpinner = (Spinner)view.findViewById(R.id.sortSpinner);
         sortSpinner.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
                 String text = (String) parent.getItemAtPosition(position);
-                //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 
                 switch (text) {
                     case "Expiry date":
@@ -154,6 +147,7 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
+        // Get reference to ListView
         ListView listView = (ListView)view.findViewById(R.id.foodListView);
         // FoodItem, ArrayAdapter etc
         foodItems = new ArrayList<FoodItem>();
@@ -162,10 +156,8 @@ public class Tab1Fragment extends Fragment {
         // Database
         database = FirebaseDatabase.getInstance();
 
-        // Database: FoodTypes
         foodTypes = new ArrayList<>();
         dbRef = database.getReference();
-        //dbRef.setValue("Hello, World!");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
@@ -175,11 +167,12 @@ public class Tab1Fragment extends Fragment {
                 DataSnapshot types = ds.child("FoodTypes");
                 DataSnapshot storage = ds.child("Storage");
 
+                // Retrieve and populate FoodTypes ArrayList
                 for (DataSnapshot type : types.getChildren()) {
                     FoodType item = type.getValue(FoodType.class);
                     foodTypes.add(item);
                 }
-
+                // Retrieve and populate FoodItems ArrayList
                 for (DataSnapshot foodItem : storage.getChildren()) {
                     FoodItem item = foodItem.getValue(FoodItem.class);
                     item.setTagId(foodItem.getKey());

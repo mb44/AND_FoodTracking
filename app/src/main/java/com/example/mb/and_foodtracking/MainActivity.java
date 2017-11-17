@@ -32,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUserInterface() {
-        //mainTextView = (TextView) findViewById(R.id.textTab1);
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         // set up the ViewPager with the sections adapter
@@ -285,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
 
         return new NdefRecord(NdefRecord.TNF_WELL_KNOWN,NdefRecord.RTD_TEXT,new byte[0],payload);
     }
-
 
     public void clearTag (View v) {
         isClearing = true;

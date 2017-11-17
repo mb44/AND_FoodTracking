@@ -1,4 +1,4 @@
-package com.example.mb.and_foodtracking;
+package com.example.mb.and_foodtracking.arrayadapters;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.mb.and_foodtracking.R;
 import com.example.mb.and_foodtracking.model.FoodDate;
 import com.example.mb.and_foodtracking.model.FoodItem;
 

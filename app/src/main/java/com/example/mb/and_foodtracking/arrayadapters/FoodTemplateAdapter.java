@@ -1,4 +1,4 @@
-package com.example.mb.and_foodtracking;
+package com.example.mb.and_foodtracking.arrayadapters;
 
 import android.app.Activity;
 import android.widget.ArrayAdapter;
@@ -11,7 +11,10 @@ import android.app.Activity;
         import android.widget.ImageView;
         import android.widget.TextView;
 
-        import java.util.ArrayList;
+import com.example.mb.and_foodtracking.FoodTemplate;
+import com.example.mb.and_foodtracking.R;
+
+import java.util.ArrayList;
 
 
 /**

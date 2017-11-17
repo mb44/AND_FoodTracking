@@ -1,15 +1,8 @@
 package com.example.mb.and_foodtracking;
 
-import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +11,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
-import android.widget.TimePicker;
-import android.widget.Toast;
+
+import com.example.mb.and_foodtracking.arrayadapters.FoodTemplateAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
