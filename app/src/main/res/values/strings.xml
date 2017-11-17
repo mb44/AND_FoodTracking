@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TabFragment</string>
+    <string name="app_name">FoodTrack</string>
     <string name="action_settings">Settings</string>
     <string name="settings_filename">foodtracking-settings</string>
     <string name="settings_isWriting">isWriting</string>
