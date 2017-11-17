@@ -160,8 +160,6 @@ public class MainActivity extends AppCompatActivity {
         isWriting = settings.getBoolean(getString(R.string.settings_isWriting), false);
         isClearing = settings.getBoolean(getString(R.string.settings_isClearing), false);
 
-        //Toast.makeText(this,"isClearing: " + isClearing, Toast.LENGTH_SHORT).show();
-
         if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
             int foodId = settings.getInt(getString(R.string.settings_foodid), 0);
             int regYear = settings.getInt(getString(R.string.settings_regYear), 1970);
@@ -170,16 +168,12 @@ public class MainActivity extends AppCompatActivity {
             int expYear = settings.getInt(getString(R.string.settings_expYear), 1970);
             int expMonth = settings.getInt(getString(R.string.settings_expMonth), 1);
             int expDate = settings.getInt(getString(R.string.settings_expDate), 1);
-            //Toast.makeText(MainActivity.this, "" +date, Toast.LENGTH_LONG).show();
 
             // Update database
             database = FirebaseDatabase.getInstance();
             dbRefStorage = database.getReference().child("Storage");
             FoodItem foodItem = new FoodItem(foodId, new FoodDate(regYear, regMonth, regDate), new FoodDate(expYear, expMonth, expDate));
 
-           //String key = dbRefStorage.push().getKey();
-            //Use the new reference to add the data
-            //foodItem.setTagId(key);
             // Send the data
             DatabaseReference tagId = dbRefStorage.push();
             tagId.setValue(foodItem);
@@ -188,9 +182,19 @@ public class MainActivity extends AppCompatActivity {
             setNewDate(tag, tagId.getKey(), foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
 
         } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
+            String tagText = readNFC(intent);
+            int tagStart = tagText.indexOf("Tag ID: ") + 8;
+            int tagEnd = tagText.indexOf("\n");
+
+            String tagString = null;
+
+            if (tagStart > 0 && tagEnd>tagStart) {
+                tagString = tagText.substring(tagStart, tagEnd);
+                dbRefStorage.child(tagString).removeValue();
+            }
             eraseTag(tag);
         }
-        readNFC(intent);
+        statusTextView.setText(readNFC(intent));
         editor = settings.edit();
         editor.putBoolean(getString(R.string.settings_isWriting), false);
         editor.putBoolean(getString(R.string.settings_isReading), false);
@@ -213,18 +217,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void eraseTag(Tag tag) {
+    private boolean eraseTag(Tag tag) {
         try {
             // write or overwrite the content on the NFC tag
             writeToNFC(EMPTY_TAG_STRING, tag);
             Toast.makeText(MainActivity.this,"Successfully erased tag", Toast.LENGTH_LONG).show();
+            statusTextView.setText("");
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(MainActivity.this,"Failed to erase tag", Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 
-    public void readNFC(Intent intent) {
+    public String readNFC(Intent intent) {
+        StringBuilder res = new StringBuilder();
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             Parcelable[] rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
@@ -240,16 +248,18 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             String tagText = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
                             statusTextView.setText(tagText);
-                            //Toast.makeText(this, tagText, Toast.LENGTH_LONG).show();
+                            res.append(tagText);
                         } catch (UnsupportedEncodingException e) {
+                            res.append("Error reading NFC...");
                             e.printStackTrace();
                         }
                     }
                 }
             }
         } else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-            statusTextView.setText("Empty NFC Tag discovered");
+            res.append("Empty NFC Tag discovered");
         }
+        return res.toString();
     }
 
     public void writeToNFC(String text, Tag tag) throws IOException, FormatException {
@@ -276,10 +286,6 @@ public class MainActivity extends AppCompatActivity {
         return new NdefRecord(NdefRecord.TNF_WELL_KNOWN,NdefRecord.RTD_TEXT,new byte[0],payload);
     }
 
-    private String generateUniqueId() {
-        // unique id generator
-        return uniqueID = UUID.randomUUID().toString();
-    }
 
     public void clearTag (View v) {
         isClearing = true;

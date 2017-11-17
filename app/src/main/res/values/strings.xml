@@ -16,6 +16,7 @@
 
     <string-array name="sort_spinner_items">
         <item>Expiry date</item>
+        <item>Registry date</item>
         <item>Food type</item>
     </string-array>
 </resources>

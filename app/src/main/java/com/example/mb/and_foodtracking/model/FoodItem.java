@@ -1,5 +1,7 @@
 package com.example.mb.and_foodtracking.model;
 
+import android.support.annotation.NonNull;
+
 public class FoodItem {
     private String tagid;
     private int foodid;
@@ -54,4 +56,5 @@ public class FoodItem {
     public int getImgResourceId() {
         return imgResourceId;
     }
+
 }

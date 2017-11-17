@@ -21,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
@@ -37,6 +39,7 @@ public class Tab1Fragment extends Fragment {
 
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodType> foodTypes;
+    private FoodItemAdapter foodItemAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +79,74 @@ public class Tab1Fragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
                 String text = (String) parent.getItemAtPosition(position);
                 //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+
+                switch (text) {
+                    case "Expiry date":
+                        //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                        Collections.sort(foodItems, new Comparator<FoodItem>() {
+                            @Override
+                            public int compare(FoodItem foodItem1, FoodItem foodItem2)
+                            {
+                                if (foodItem1.getExpiry().getYear() < foodItem2.getExpiry().getYear()) {
+                                    return -1;
+                                } else if (foodItem1.getExpiry().getYear() > foodItem2.getExpiry().getYear()) {
+                                    return 1;
+                                } else if (foodItem1.getExpiry().getMonth() < foodItem2.getExpiry().getMonth()) {
+                                    return -1;
+                                } else if (foodItem1.getExpiry().getMonth() > foodItem2.getExpiry().getMonth()) {
+                                    return 1;
+                                } else if (foodItem1.getExpiry().getMonth() < foodItem2.getExpiry().getMonth()) {
+                                    return -1;
+                                } else if (foodItem1.getExpiry().getDate() > foodItem2.getExpiry().getDate()) {
+                                    return 1;
+                                } else if (foodItem1.getExpiry().getDate() < foodItem2.getExpiry().getDate()) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        });
+                        break;
+                    case "Registry date":
+                        Collections.sort(foodItems, new Comparator<FoodItem>() {
+                            @Override
+                            public int compare(FoodItem foodItem1, FoodItem foodItem2)
+                            {
+                                if (foodItem1.getRegistry().getYear() < foodItem2.getRegistry().getYear()) {
+                                    return -1;
+                                } else if (foodItem1.getRegistry().getYear() > foodItem2.getRegistry().getYear()) {
+                                    return 1;
+                                } else if (foodItem1.getRegistry().getMonth() < foodItem2.getRegistry().getMonth()) {
+                                    return -1;
+                                } else if (foodItem1.getRegistry().getMonth() > foodItem2.getRegistry().getMonth()) {
+                                    return 1;
+                                } else if (foodItem1.getRegistry().getMonth() < foodItem2.getRegistry().getMonth()) {
+                                    return -1;
+                                } else if (foodItem1.getRegistry().getDate() > foodItem2.getRegistry().getDate()) {
+                                    return 1;
+                                } else if (foodItem1.getRegistry().getDate() < foodItem2.getRegistry().getDate()) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        });
+                        break;
+                    case "Food type":
+                        Collections.sort(foodItems, new Comparator<FoodItem>() {
+                            @Override
+                            public int compare(FoodItem foodItem1, FoodItem foodItem2)
+                            {
+                               String foodName1 = foodTypes.get( foodItem1.getFoodid()).getName();
+                               String foodName2 = foodTypes.get( foodItem2.getFoodid()).getName();
+                               return foodName1.compareTo(foodName2);
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                foodItemAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -86,7 +157,7 @@ public class Tab1Fragment extends Fragment {
         ListView listView = (ListView)view.findViewById(R.id.foodListView);
         // FoodItem, ArrayAdapter etc
         foodItems = new ArrayList<FoodItem>();
-        FoodItemAdapter foodItemAdapter = new FoodItemAdapter(context, foodItems);
+        foodItemAdapter = new FoodItemAdapter(context, foodItems);
         listView.setAdapter(foodItemAdapter);
         // Database
         database = FirebaseDatabase.getInstance();
