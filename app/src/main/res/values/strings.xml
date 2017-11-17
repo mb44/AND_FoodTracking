@@ -6,7 +6,7 @@
     <string name="settings_isReading">isReading</string>
     <string name="settings_isClearing">isClearing</string>
 
-    <string name="settings_foodid">regYear</string>
+    <string name="settings_foodid">foodId</string>
     <string name="settings_regYear">regYear</string>
     <string name="settings_regMonth">regMonth</string>
     <string name="settings_regDate">regDate</string>

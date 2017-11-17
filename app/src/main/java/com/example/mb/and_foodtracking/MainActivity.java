@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"state: onNewIntent");
         initUserInterface();
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        Toast.makeText(this,"On new intent", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"On new intent", Toast.LENGTH_SHORT).show();
 
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_filename), MODE_PRIVATE);
         isWriting = settings.getBoolean(getString(R.string.settings_isWriting), false);
@@ -167,22 +167,25 @@ public class MainActivity extends AppCompatActivity {
             int regYear = settings.getInt(getString(R.string.settings_regYear), 1970);
             int regMonth = settings.getInt(getString(R.string.settings_regMonth), 1);
             int regDate = settings.getInt(getString(R.string.settings_regDate), 1);
-
             int expYear = settings.getInt(getString(R.string.settings_expYear), 1970);
             int expMonth = settings.getInt(getString(R.string.settings_expMonth), 1);
             int expDate = settings.getInt(getString(R.string.settings_expDate), 1);
             //Toast.makeText(MainActivity.this, "" +date, Toast.LENGTH_LONG).show();
-            setNewDate(tag, foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
 
+            // Update database
             database = FirebaseDatabase.getInstance();
-            dbRefStorage = database.getReference("Storage");
+            dbRefStorage = database.getReference().child("Storage");
             FoodItem foodItem = new FoodItem(foodId, new FoodDate(regYear, regMonth, regDate), new FoodDate(expYear, expMonth, expDate));
 
-            DatabaseReference foodRef = dbRefStorage.push();
+           //String key = dbRefStorage.push().getKey();
             //Use the new reference to add the data
-            foodRef.setValue(foodItem);
+            //foodItem.setTagId(key);
+            // Send the data
+            DatabaseReference tagId = dbRefStorage.push();
+            tagId.setValue(foodItem);
 
-            foodItem.setTagId(foodRef.getKey());
+            // Update Tag
+            setNewDate(tag, tagId.getKey(), foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
 
         } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
             eraseTag(tag);
@@ -195,13 +198,13 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    private void setNewDate(Tag tag, int foodid, int regYear, int regMonth, int regDate, int expYear, int expMonth, int expDate) {
+    private void setNewDate(Tag tag, String tagid, int foodid, int regYear, int regMonth, int regDate, int expYear, int expMonth, int expDate) {
         try {
             // write or overwrite the content on the NFC tag
             writeToNFC(
-                    "Tag ID: "+generateUniqueId() + "\nFood ID: " + foodid +
+                    "Tag ID: "+ tagid +
+                    "\nFood ID: " + foodid +
                     "\nRegistry: " + regYear + "/" + regMonth + "/" + regDate +
-                     "\nTag ID: "+generateUniqueId()+
                     "\nExpiry: " + expYear + "/" + expMonth + "/" + expDate, tag);
             Toast.makeText(MainActivity.this,"Successfully wrote tag", Toast.LENGTH_LONG).show();
         } catch (Exception e) {

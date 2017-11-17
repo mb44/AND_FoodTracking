@@ -9,7 +9,6 @@ public class FoodItem {
     private int imgResourceId;
 
     public FoodItem() {
-        this.tagid = "";
         this.foodid = 0;
         this.name = "";
         this.registry = new FoodDate();
@@ -17,29 +16,18 @@ public class FoodItem {
         this.imgResourceId = -1;
     }
 
+    // This contructor decides what gets serialized/deserialized
     public FoodItem(int foodid, FoodDate registry, FoodDate expiry) {
-        this.tagid = "";
         this.foodid = foodid;
-        this.name = "";
         this.registry = registry;
         this.expiry = expiry;
-        this.imgResourceId = -1;
-    }
-
-    public FoodItem(String id, String name, FoodDate registry, FoodDate expiry, int imgResourceId) {
-        this.tagid = id;
-        foodid = 0;
-        this.name = name;
-        this.registry = registry;
-        this.expiry = expiry;
-        this.imgResourceId = imgResourceId;
     }
 
     public String getTagId() {
         return tagid;
     }
 
-    public void setTagId(String gtagid) {
+    public void setTagId(String tagid) {
         this.tagid = tagid;
     }
 

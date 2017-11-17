@@ -33,8 +33,7 @@ public class Tab1Fragment extends Fragment {
     private Spinner sortSpinner;
 
     private FirebaseDatabase database;
-    private DatabaseReference dbRefFoodTypes;
-    private DatabaseReference dbRefStorage;
+    private DatabaseReference dbRef;
 
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodType> foodTypes;
@@ -94,36 +93,26 @@ public class Tab1Fragment extends Fragment {
 
         // Database: FoodTypes
         foodTypes = new ArrayList<>();
-        dbRefFoodTypes = database.getReference("FoodType");
+        dbRef = database.getReference();
         //dbRef.setValue("Hello, World!");
-        dbRefFoodTypes.addValueEventListener(new ValueEventListener() {
+        dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
+                foodTypes.clear();
                 foodItems.clear();
 
-                for (DataSnapshot foodType : ds.getChildren()) {
-                    FoodType item = foodType.getValue(FoodType.class);
+                DataSnapshot types = ds.child("FoodTypes");
+                DataSnapshot storage = ds.child("Storage");
+
+                for (DataSnapshot type : types.getChildren()) {
+                    FoodType item = type.getValue(FoodType.class);
                     foodTypes.add(item);
                 }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
 
-        // Database: Storage
-        dbRefStorage = database.getReference("Storage");
-        //dbRef.setValue("Hello, World!");
-        dbRefStorage.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot ds) {
-                foodItems.clear();
-                //Toast.makeText(context, "Count: " + ds.getChildrenCount(), Toast.LENGTH_LONG).show();
-
-                for (DataSnapshot foodItem : ds.getChildren()) {
+                for (DataSnapshot foodItem : storage.getChildren()) {
                     FoodItem item = foodItem.getValue(FoodItem.class);
-                    //String foodName = foodTypes.get(item.getFoodid()).getName();
-                    item.setName("food name");
+                    item.setTagId(foodItem.getKey());
+                    item.setName( foodTypes.get( item.getFoodid()).getName());
                     foodItems.add(item);
                 }
             }
