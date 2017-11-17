@@ -20,16 +20,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
@@ -65,17 +72,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initUserInterface();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-        myRef.setValue("Hello, World!");
-
-        /*
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        // Get the reference
-        final DatabaseReference dbRef = database.getReference("messages");
-        dbRef.push().setValue("Hello FoodTrack");
-        */
-
         // We need an Editor object to make preference changes.
         // All objects are from android.context.Context
         settings = getSharedPreferences(getString(R.string.settings_filename), MODE_PRIVATE);
@@ -95,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             ndef.addDataType("*/*");
             //    ndef2.addDataType("MIME_TEXT_PLAIN");
-        }catch (IntentFilter.MalformedMimeTypeException e){
+        } catch (IntentFilter.MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
         intentFiltersArray = new IntentFilter[]{ndef, /*ndef2*/ };
@@ -104,16 +100,14 @@ public class MainActivity extends AppCompatActivity {
         detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
     }
 
-    private void  setupViewPager(ViewPager viewPager)
-    {
+    private void  setupViewPager(ViewPager viewPager) {
         mSectionsPageAdapter.addFragment(new Tab1Fragment(), "Menu");
         mSectionsPageAdapter.addFragment(new Tab2Fragment(), "Register food");
         mSectionsPageAdapter.addFragment(new Tab3Fragment(), "Unregister food");
         viewPager.setAdapter(mSectionsPageAdapter);
     }
 
-    private void initUserInterface()
-    {
+    private void initUserInterface() {
         //mainTextView = (TextView) findViewById(R.id.textTab1);
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
@@ -146,8 +140,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG,"state: onStart");
-        //readNFC(getIntent());                    // read the content on the NFC tag
-        //readNFC(intent);
     }
 
     @Override
@@ -207,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void eraseTag(Tag tag)
-    {
+    private void eraseTag(Tag tag) {
         try {
             // write or overwrite the content on the NFC tag
             writeToNFC(EMPTY_TAG_STRING, tag);
@@ -243,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-            //mainTextView.setText("Empty NFCtag is discovered");
             statusTextView.setText("Empty NFC Tag discovered");
         }
     }
@@ -272,32 +262,15 @@ public class MainActivity extends AppCompatActivity {
         return new NdefRecord(NdefRecord.TNF_WELL_KNOWN,NdefRecord.RTD_TEXT,new byte[0],payload);
     }
 
-    private String currentDateString(){
-        String currentDate = Calendar.getInstance().getTime().toString();
-        return currentDate;
+    private String generateUniqueId() {
+        // unique id generator
+        return uniqueID = UUID.randomUUID().toString();
     }
 
-    private String generateUniqueId()
-    {
-        return uniqueID = UUID.randomUUID().toString();// unique id generator
-    }
-
-    public void clearTag (View v)
-    {
+    public void clearTag (View v) {
         isClearing = true;
         isWriting = false;
         Toast.makeText(MainActivity.this,"The clear tag is clicked",Toast.LENGTH_LONG).show();
-
         Log.d(TAG,"This is the clear tag");
     }
-
-    /*
-    public void addDate (View v)
-    {
-        isWriting = true;
-        isClearing = false;
-        Toast.makeText(MainActivity.this,"The add date tag is clicked",Toast.LENGTH_LONG).show();
-        Log.d(TAG, currentDateString());
-    }
-    */
 }

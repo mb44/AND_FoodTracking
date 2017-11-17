@@ -18,8 +18,7 @@ import android.app.Activity;
  * Created by Mb on 07-11-2017.
  */
 
-public class FoodTemplateAdapter extends ArrayAdapter<FoodTemplate>
-{
+public class FoodTemplateAdapter extends ArrayAdapter<FoodTemplate> {
     public FoodTemplateAdapter(Activity context, ArrayList<FoodTemplate>food) {
         super(context, 0, food);
     }

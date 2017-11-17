@@ -1,19 +1,26 @@
 package com.example.mb.and_foodtracking;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.mb.and_foodtracking.model.FoodItem;
+import com.example.mb.and_foodtracking.model.FoodType;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
@@ -25,8 +32,12 @@ public class Tab1Fragment extends Fragment {
     private Button closeFoodStatusButton;
     private Spinner sortSpinner;
 
-    //private FirebaseDatabase database;
-    //private DatabaseReference dbRef;
+    private FirebaseDatabase database;
+    private DatabaseReference dbRefFoodTypes;
+    private DatabaseReference dbRefStorage;
+
+    private ArrayList<FoodItem> foodItems;
+    private ArrayList<FoodType> foodTypes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,11 +76,58 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
                 String text = (String) parent.getItemAtPosition(position);
-                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        ListView listView = (ListView)view.findViewById(R.id.foodListView);
+        // FoodItem, ArrayAdapter etc
+        foodItems = new ArrayList<FoodItem>();
+        FoodItemAdapter foodItemAdapter = new FoodItemAdapter(context, foodItems);
+        listView.setAdapter(foodItemAdapter);
+        // Database
+        database = FirebaseDatabase.getInstance();
+
+        // Database: FoodTypes
+        foodTypes = new ArrayList<>();
+        dbRefFoodTypes = database.getReference("FoodType");
+        //dbRef.setValue("Hello, World!");
+        dbRefFoodTypes.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                foodItems.clear();
+
+                for (DataSnapshot foodType : ds.getChildren()) {
+                    FoodType item = foodType.getValue(FoodType.class);
+                    foodTypes.add(item);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+        // Database: Storage
+        dbRefStorage = database.getReference("Storage");
+        //dbRef.setValue("Hello, World!");
+        dbRefStorage.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                foodItems.clear();
+                for (DataSnapshot foodItem : ds.getChildren()) {
+                    FoodItem item = foodItem.getValue(FoodItem.class);
+                    String foodName = foodTypes.get(item.getFoodid()).getName();
+                    item.setName(foodName);
+                    foodItems.add(item);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
 
