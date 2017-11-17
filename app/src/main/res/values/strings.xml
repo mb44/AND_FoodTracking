@@ -5,6 +5,11 @@
     <string name="settings_isWriting">isWriting</string>
     <string name="settings_isReading">isReading</string>
     <string name="settings_isClearing">isClearing</string>
+
+    <string name="settings_foodid">regYear</string>
+    <string name="settings_regYear">regYear</string>
+    <string name="settings_regMonth">regMonth</string>
+    <string name="settings_regDate">regDate</string>
     <string name="settings_expYear">expYear</string>
     <string name="settings_expMonth">expMonth</string>
     <string name="settings_expDate">expDate</string>

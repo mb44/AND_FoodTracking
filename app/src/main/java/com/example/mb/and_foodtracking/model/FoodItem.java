@@ -1,7 +1,7 @@
 package com.example.mb.and_foodtracking.model;
 
 public class FoodItem {
-    private int tagid;
+    private String tagid;
     private int foodid;
     private String name;
     private FoodDate registry;
@@ -9,7 +9,7 @@ public class FoodItem {
     private int imgResourceId;
 
     public FoodItem() {
-        this.tagid = 0;
+        this.tagid = "";
         this.foodid = 0;
         this.name = "";
         this.registry = new FoodDate();
@@ -17,8 +17,8 @@ public class FoodItem {
         this.imgResourceId = -1;
     }
 
-    public FoodItem(int tagid, int foodid, FoodDate registry, FoodDate expiry) {
-        this.tagid = tagid;
+    public FoodItem(int foodid, FoodDate registry, FoodDate expiry) {
+        this.tagid = "";
         this.foodid = foodid;
         this.name = "";
         this.registry = registry;
@@ -26,7 +26,7 @@ public class FoodItem {
         this.imgResourceId = -1;
     }
 
-    public FoodItem(int id, String name, FoodDate registry, FoodDate expiry, int imgResourceId) {
+    public FoodItem(String id, String name, FoodDate registry, FoodDate expiry, int imgResourceId) {
         this.tagid = id;
         foodid = 0;
         this.name = name;
@@ -35,8 +35,12 @@ public class FoodItem {
         this.imgResourceId = imgResourceId;
     }
 
-    public int getTagid() {
+    public String getTagId() {
         return tagid;
+    }
+
+    public void setTagId(String gtagid) {
+        this.tagid = tagid;
     }
 
     public int getFoodid() {

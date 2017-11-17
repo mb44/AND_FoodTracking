@@ -111,7 +111,6 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
-
         // Database: Storage
         dbRefStorage = database.getReference("Storage");
         //dbRef.setValue("Hello, World!");
@@ -119,10 +118,12 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot ds) {
                 foodItems.clear();
+                //Toast.makeText(context, "Count: " + ds.getChildrenCount(), Toast.LENGTH_LONG).show();
+
                 for (DataSnapshot foodItem : ds.getChildren()) {
                     FoodItem item = foodItem.getValue(FoodItem.class);
-                    String foodName = foodTypes.get(item.getFoodid()).getName();
-                    item.setName(foodName);
+                    //String foodName = foodTypes.get(item.getFoodid()).getName();
+                    item.setName("food name");
                     foodItems.add(item);
                 }
             }

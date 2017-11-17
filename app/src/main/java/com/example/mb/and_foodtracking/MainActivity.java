@@ -20,31 +20,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.example.mb.and_foodtracking.model.FoodDate;
+import com.example.mb.and_foodtracking.model.FoodItem;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.UUID;
-
-import static android.graphics.PorterDuff.Mode.CLEAR;
-import static android.os.Build.VERSION_CODES.M;
-import static com.example.mb.and_foodtracking.R.id.statusTextView;
-
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -64,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private String uniqueID;
     private SharedPreferences settings;
     private SharedPreferences.Editor editor;
+
+    private FirebaseDatabase database;
+    private DatabaseReference dbRefStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,11 +163,27 @@ public class MainActivity extends AppCompatActivity {
         //Toast.makeText(this,"isClearing: " + isClearing, Toast.LENGTH_SHORT).show();
 
         if(isWriting && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
-            int year = settings.getInt(getString(R.string.settings_expYear), 1970);
-            int month = settings.getInt(getString(R.string.settings_expMonth), 1);
-            int date = settings.getInt(getString(R.string.settings_expDate), 1);
+            int foodId = settings.getInt(getString(R.string.settings_foodid), 0);
+            int regYear = settings.getInt(getString(R.string.settings_regYear), 1970);
+            int regMonth = settings.getInt(getString(R.string.settings_regMonth), 1);
+            int regDate = settings.getInt(getString(R.string.settings_regDate), 1);
+
+            int expYear = settings.getInt(getString(R.string.settings_expYear), 1970);
+            int expMonth = settings.getInt(getString(R.string.settings_expMonth), 1);
+            int expDate = settings.getInt(getString(R.string.settings_expDate), 1);
             //Toast.makeText(MainActivity.this, "" +date, Toast.LENGTH_LONG).show();
-            setNewDate(tag, year, month, date);
+            setNewDate(tag, foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
+
+            database = FirebaseDatabase.getInstance();
+            dbRefStorage = database.getReference("Storage");
+            FoodItem foodItem = new FoodItem(foodId, new FoodDate(regYear, regMonth, regDate), new FoodDate(expYear, expMonth, expDate));
+
+            DatabaseReference foodRef = dbRefStorage.push();
+            //Use the new reference to add the data
+            foodRef.setValue(foodItem);
+
+            foodItem.setTagId(foodRef.getKey());
+
         } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
             eraseTag(tag);
         }
@@ -188,10 +195,14 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    private void setNewDate(Tag tag, int year, int month, int date) {
+    private void setNewDate(Tag tag, int foodid, int regYear, int regMonth, int regDate, int expYear, int expMonth, int expDate) {
         try {
             // write or overwrite the content on the NFC tag
-            writeToNFC("Expiry date: " + year + "/" + month + "/" + date + "\nTag ID: "+generateUniqueId()+"\n", tag);
+            writeToNFC(
+                    "Tag ID: "+generateUniqueId() + "\nFood ID: " + foodid +
+                    "\nRegistry: " + regYear + "/" + regMonth + "/" + regDate +
+                     "\nTag ID: "+generateUniqueId()+
+                    "\nExpiry: " + expYear + "/" + expMonth + "/" + expDate, tag);
             Toast.makeText(MainActivity.this,"Successfully wrote tag", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();

@@ -49,16 +49,17 @@ public class Tab2Fragment extends Fragment {
     private int expMonth;
     private int expDate;
 
+    private int selectedFoodId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab2_fragment,container,false);
-        FoodTemplate food1 = new FoodTemplate("Cow", "2 week", R.drawable.cow);
-        FoodTemplate food2 = new FoodTemplate("Pig", "3 week", R.drawable.pig);
-        FoodTemplate food3 = new FoodTemplate("Vegetables", "1 week", R.drawable.vegetables);
-
-        FoodTemplate food4 = new FoodTemplate("Milk", "1 week", R.drawable.milk);
-        FoodTemplate food5 = new FoodTemplate("Cashew Nuts", "2 week", R.drawable.cashew);
-        FoodTemplate food6 = new FoodTemplate("Sugar", "60 week", R.drawable.sugar);
+        FoodTemplate food1 = new FoodTemplate(2,"Cashew Nuts", "2 week", R.drawable.cashew);
+        FoodTemplate food2 = new FoodTemplate(1, "Cow", "2 week", R.drawable.cow);
+        FoodTemplate food3 = new FoodTemplate(3, "Pig", "3 week", R.drawable.pig);
+        FoodTemplate food4 = new FoodTemplate(4, "Vegetables", "1 week", R.drawable.vegetables);
+        FoodTemplate food5 = new FoodTemplate(5, "Milk", "1 week", R.drawable.milk);
+        FoodTemplate food6 = new FoodTemplate(0,"Sugar", "60 week", R.drawable.sugar);
 
         foodTemplates = new ArrayList<>();
         foodTemplates.add(food1);
@@ -105,7 +106,8 @@ public class Tab2Fragment extends Fragment {
         gridView.setOnItemClickListener( new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long postition) {
-                //FoodTemplate ft = (FoodTemplate)parent.getItemAtPosition(position);
+                FoodTemplate ft = (FoodTemplate)parent.getItemAtPosition(position);
+                selectedFoodId = ft.getId();
                 gridView.setAlpha(0.3f);
                 setDateLayout.setVisibility(View.VISIBLE);
             }
@@ -116,7 +118,18 @@ public class Tab2Fragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                int regYear = c.get(Calendar.YEAR);
+                int regMonth = c.get(Calendar.MONTH);
+                int regDate = c.get(Calendar.DAY_OF_WEEK);
+
                 editor = settings.edit();
+
+                editor.putInt(getString(R.string.settings_foodid), selectedFoodId);
+                editor.putInt(getString(R.string.settings_regYear), regYear);
+                editor.putInt(getString(R.string.settings_regMonth), regMonth);
+                editor.putInt(getString(R.string.settings_regDate), regDate);
+
                 editor.putInt(getString(R.string.settings_expYear), expYear);
                 editor.putInt(getString(R.string.settings_expMonth), expMonth);
                 editor.putInt(getString(R.string.settings_expDate), expDate);

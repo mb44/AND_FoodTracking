@@ -28,7 +28,7 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
         FoodItem currentFoodItem = getItem(position);
 
         TextView textViewId = (TextView)listItemView.findViewById(R.id.tag_id);
-        textViewId.setText("Tag id:\n" +currentFoodItem.getTagid());
+        textViewId.setText("Tag id:\n" +currentFoodItem.getTagId());
 
         TextView textViewName = (TextView)listItemView.findViewById(R.id.food_name);
         textViewName.setText("Name:\n" + currentFoodItem.getName());
