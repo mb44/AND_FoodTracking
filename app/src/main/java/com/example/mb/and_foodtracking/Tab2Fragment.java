@@ -98,7 +98,7 @@ public class Tab2Fragment extends Fragment {
         // Set listener on GridView
         gridView.setOnItemClickListener( new AdapterView.OnItemClickListener(){
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long postition) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FoodTemplate ft = (FoodTemplate)parent.getItemAtPosition(position);
                 selectedFoodId = ft.getId();
                 gridView.setAlpha(0.3f);

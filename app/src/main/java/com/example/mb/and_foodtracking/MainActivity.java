@@ -167,29 +167,31 @@ public class MainActivity extends AppCompatActivity {
             int expMonth = settings.getInt(getString(R.string.settings_expMonth), 1);
             int expDate = settings.getInt(getString(R.string.settings_expDate), 1);
 
-            // Update database
+            // Send to Firebase
             database = FirebaseDatabase.getInstance();
             dbRefStorage = database.getReference().child("Storage");
             FoodItem foodItem = new FoodItem(foodId, new FoodDate(regYear, regMonth, regDate), new FoodDate(expYear, expMonth, expDate));
 
-            // Send the data
+            // Create new push key and set foodItem as its value
             DatabaseReference tagId = dbRefStorage.push();
             tagId.setValue(foodItem);
 
-            // Update Tag
+            // Update Tag (including the tagId retrieved from Firebase)
             setNewDate(tag, tagId.getKey(), foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
-
         } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
             String tagText = readNFC(intent);
             int tagStart = tagText.indexOf("Tag ID: ") + 8;
+            // The tag id ends just before a newline
             int tagEnd = tagText.indexOf("\n");
 
             String tagString = null;
 
+            // Remove foodItem from Firebase
             if (tagStart > 0 && tagEnd>tagStart) {
                 tagString = tagText.substring(tagStart, tagEnd);
                 dbRefStorage.child(tagString).removeValue();
             }
+            // Erase the tag
             eraseTag(tag);
         }
         statusTextView.setText(readNFC(intent));
