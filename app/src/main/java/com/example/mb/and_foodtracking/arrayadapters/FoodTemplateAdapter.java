@@ -2,14 +2,12 @@ package com.example.mb.and_foodtracking.arrayadapters;
 
 import android.app.Activity;
 import android.widget.ArrayAdapter;
-import android.app.Activity;
-        import android.support.annotation.NonNull;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.ArrayAdapter;
-        import android.widget.ImageView;
-        import android.widget.TextView;
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.mb.and_foodtracking.FoodTemplate;
 import com.example.mb.and_foodtracking.R;
@@ -17,36 +15,47 @@ import com.example.mb.and_foodtracking.R;
 import java.util.ArrayList;
 
 
-/**
- * Created by Mb on 07-11-2017.
- */
-
 public class FoodTemplateAdapter extends ArrayAdapter<FoodTemplate> {
-    public FoodTemplateAdapter(Activity context, ArrayList<FoodTemplate>food) {
+    static class ViewHolder {
+        TextView foodNameTextView;
+        ImageView foodImageView;
+    }
+
+    public FoodTemplateAdapter(Activity context, ArrayList<FoodTemplate> food) {
         super(context, 0, food);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View gridItemView = convertView;
+        ViewHolder viewHolder = null;
 
-        if (gridItemView == null) {
-            gridItemView = LayoutInflater.from(getContext()).inflate(R.layout.gridview_item, parent, false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.gridview_item, parent, false);
+            // Instantiate ViewHolder
+            viewHolder = new FoodTemplateAdapter.ViewHolder();
+            // Set tag to use viewHolder later
+            convertView.setTag(viewHolder);
+
+            viewHolder.foodNameTextView = convertView.findViewById(R.id.item_text);
+            viewHolder.foodImageView = convertView.findViewById(R.id.item_icon);
+        } else {
+            // Use the instantiated ViewHolder if the View is already inflatedd
+            viewHolder = (FoodTemplateAdapter.ViewHolder) convertView.getTag();
         }
 
-        FoodTemplate currentFood = getItem(position);
+        FoodTemplate currentItem = getItem(position);
 
-        TextView textView = (TextView)gridItemView.findViewById(R.id.item_text);
-        textView.setText(currentFood.getName() + "\n");
+        if (currentItem != null) {
+            viewHolder.foodNameTextView.setText("Tag id:\n" + currentItem.getName());
 
-        int imgResourceId = currentFood.getImgResourceId();
-
-        if (imgResourceId != -1) {
-            ImageView imgView = (ImageView)gridItemView.findViewById(R.id.item_icon);
-            imgView.setImageResource(currentFood.getImgResourceId());
+            int imgResourceId = currentItem.getImgResourceId();
+            if (imgResourceId != -1) {
+                ImageView imgView = (ImageView)convertView.findViewById(R.id.item_icon);
+                viewHolder.foodImageView.setImageResource(currentItem.getImgResourceId());
+            }
         }
 
-        return gridItemView;
+        return convertView;
     }
 }

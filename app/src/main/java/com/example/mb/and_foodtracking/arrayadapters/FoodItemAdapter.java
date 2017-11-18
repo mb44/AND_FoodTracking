@@ -14,42 +14,63 @@ import com.example.mb.and_foodtracking.model.FoodItem;
 import java.util.ArrayList;
 
 public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
+    static class ViewHolder {
+        TextView tagIdTextView;
+        TextView nameTextView;
+        TextView regTextView;
+        TextView expTextView;
+    }
+
     public FoodItemAdapter(Activity context, ArrayList<FoodItem>foodItems) {
         super(context, 0, foodItems);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View listItemView = convertView;
+        ViewHolder viewHolder = null;
 
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.listview_item, parent, false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.listview_item, parent, false);
+            // Instantiate ViewHolder
+            viewHolder = new ViewHolder();
+            // Set tag to use viewHolder later
+            convertView.setTag(viewHolder);
+
+            viewHolder.tagIdTextView = convertView.findViewById(R.id.tag_id);
+            viewHolder.nameTextView = convertView.findViewById(R.id.food_name);
+            viewHolder.regTextView = convertView.findViewById(R.id.food_regdate);
+            viewHolder.expTextView =convertView.findViewById(R.id.food_expdate);
+        } else {
+            // Use the instantiated ViewHolder if the View is already inflatedd
+            viewHolder = (ViewHolder)convertView.getTag();
         }
 
-        FoodItem currentFoodItem = getItem(position);
-
-        TextView textViewId = (TextView)listItemView.findViewById(R.id.tag_id);
-        textViewId.setText("Tag id:\n" +currentFoodItem.getTagId());
-
-        TextView textViewName = (TextView)listItemView.findViewById(R.id.food_name);
-        textViewName.setText("Name:\n" + currentFoodItem.getName());
-
-        TextView textViewReg = (TextView)listItemView.findViewById(R.id.food_regdate);
-        FoodDate regDate = currentFoodItem.getRegistry();
-        textViewReg.setText("Registry:\n" + regDate.getYear()+"/"+regDate.getMonth()+"/"+regDate.getDate() );
-
-        TextView textViewExp= (TextView)listItemView.findViewById(R.id.food_expdate);
-        FoodDate expDate = currentFoodItem.getExpiry();
-        textViewExp.setText("Expiry: " + expDate.getYear()+"/"+expDate.getMonth()+"/"+expDate.getDate() );
-
-        /*
-        int imgResourceId = currentFoodItem.getImgResourceId();
-
-        if (imgResourceId != -1) {
-            ImageView imgView = (ImageView)listItemView.findViewById(R.id.item_icon);
-            imgView.setImageResource(currentFoodItem.getImgResourceId());
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.listview_item, parent, false);
         }
-*/
-        return listItemView;
+
+        FoodItem currentItem = getItem(position);
+
+        if (currentItem != null) {
+            viewHolder.tagIdTextView.setText("Tag id:\n" +currentItem.getTagId());
+            viewHolder.nameTextView.setText("Name:\n" + currentItem.getName());
+
+            FoodDate regDate = currentItem.getRegistry();
+            viewHolder.regTextView.setText("Registry:\n" + regDate.getYear()+"/"+regDate.getMonth()+"/"+regDate.getDate() );
+
+            FoodDate expDate = currentItem.getExpiry();
+            viewHolder.expTextView.setText("Expiry: " + expDate.getYear()+"/"+expDate.getMonth()+"/"+expDate.getDate() );
+
+            /*
+            int imgResourceId = currentItem.getImgResourceId();
+
+            if (imgResourceId != -1) {
+                ImageView imgView = (ImageView)listItemView.findViewById(R.id.item_icon);
+                imgView.setImageResource(currentItem.getImgResourceId());
+            }
+
+    */
+        }
+        return convertView;
     }
 }
