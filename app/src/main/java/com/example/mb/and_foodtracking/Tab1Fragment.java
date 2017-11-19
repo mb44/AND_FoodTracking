@@ -1,7 +1,13 @@
 package com.example.mb.and_foodtracking;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.example.mb.and_foodtracking.arrayadapters.FoodItemAdapter;
+import com.example.mb.and_foodtracking.model.FoodDate;
 import com.example.mb.and_foodtracking.model.FoodItem;
 import com.example.mb.and_foodtracking.model.FoodType;
 import com.google.firebase.database.DataSnapshot;
@@ -21,8 +28,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
@@ -40,6 +50,8 @@ public class Tab1Fragment extends Fragment {
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodType> foodTypes;
     private FoodItemAdapter foodItemAdapter;
+
+    private NotificationCompat.Builder notification;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,9 +85,9 @@ public class Tab1Fragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
                 String text = (String) parent.getItemAtPosition(position);
 
+                // Sort ListView items based on...
                 switch (text) {
                     case "Expiry date":
-                        //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
                         Collections.sort(foodItems, new Comparator<FoodItem>() {
                             @Override
                             public int compare(FoodItem foodItem1, FoodItem foodItem2)
@@ -139,6 +151,7 @@ public class Tab1Fragment extends Fragment {
                     default:
                         break;
                 }
+                // Update the adapter
                 foodItemAdapter.notifyDataSetChanged();
             }
 
@@ -153,6 +166,7 @@ public class Tab1Fragment extends Fragment {
         foodItems = new ArrayList<FoodItem>();
         foodItemAdapter = new FoodItemAdapter(context, foodItems);
         listView.setAdapter(foodItemAdapter);
+
         // Database
         database = FirebaseDatabase.getInstance();
 
@@ -179,6 +193,9 @@ public class Tab1Fragment extends Fragment {
                     item.setName( foodTypes.get( item.getFoodid()).getName());
                     foodItems.add(item);
                 }
+
+                // Notify users if food expire soon
+                notifyExpiry();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -186,5 +203,55 @@ public class Tab1Fragment extends Fragment {
         });
 
         return view;
+    }
+
+    private long daysBetween(Calendar startDate, Calendar endDate) {
+        long end = endDate.getTimeInMillis();
+        long start = startDate.getTimeInMillis();
+        return TimeUnit.MILLISECONDS.toDays(Math.abs(end - start));
+    }
+
+    private void notifyExpiry() {
+        final Calendar now = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+
+        for (FoodItem food : foodItems) {
+            FoodDate exp = food.getExpiry();
+            int expYear = exp.getYear();
+            int expMonth = exp.getMonth();
+            int expDate = exp.getDate();
+            end.set(expYear, expMonth-1, expDate);
+
+            long daysDiff = daysBetween(now, end);
+
+            if (daysDiff >= 0 && daysDiff <= 1) {
+                // Setup notifications
+                notification = new NotificationCompat.Builder(context);
+                notification.setAutoCancel(true);
+                // Builds notifications and issues it
+                NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                notification.setSmallIcon(R.drawable.cow);
+                notification.setTicker("FoodTrack message");
+                notification.setWhen(System.currentTimeMillis());
+
+
+                if (daysDiff==0) {
+                    notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) today");
+
+                } else if (daysDiff==1) {
+                    notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) tomorrow");
+                }
+
+                notification.setContentText("Tag ID: " + food.getTagId());
+
+                Intent intent = new Intent(context, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                notification.setContentIntent(pendingIntent);
+
+                int uniqueID = UUID.randomUUID().hashCode();
+                nm.notify(uniqueID, notification.build());
+            }
+        }
     }
 }

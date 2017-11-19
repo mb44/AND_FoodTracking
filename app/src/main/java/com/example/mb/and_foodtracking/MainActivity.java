@@ -4,23 +4,16 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.nfc.FormatException;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.Ndef;
-import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +22,10 @@ import com.example.mb.and_foodtracking.model.FoodItem;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
+    private NfcUtil nfcUtil;
     private SectionsPageAdapter mSectionsPageAdapter;
     private ViewPager mViewPager;
     private NfcAdapter nfcAdapter;
@@ -67,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         settings = getSharedPreferences(getString(R.string.settings_filename), MODE_PRIVATE);
         editor = settings.edit();
         editor.putBoolean(getString(R.string.settings_isWriting), false);
-        editor.putBoolean(getString(R.string.settings_isReading), false);
         editor.putBoolean(getString(R.string.settings_isClearing), false);
         editor.commit();
 
@@ -143,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG,"state: onResume");
         //Toast.makeText(this, "onResume", Toast.LENGTH_LONG).show();
+        nfcUtil = new NfcUtil(this);
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListArray);
     }
 
@@ -177,9 +168,10 @@ public class MainActivity extends AppCompatActivity {
             tagId.setValue(foodItem);
 
             // Update Tag (including the tagId retrieved from Firebase)
-            setNewDate(tag, tagId.getKey(), foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
+            nfcUtil.setNewDate( tag, tagId.getKey(), foodId, regYear, regMonth, regDate, expYear, expMonth, expDate);
         } else if(isClearing && intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) != null) {
-            String tagText = readNFC(intent);
+            String tagText = nfcUtil.readNFC(intent);
+            statusTextView.setText(tagText);
             int tagStart = tagText.indexOf("Tag ID: ") + 8;
             // The tag id ends just before a newline
             int tagEnd = tagText.indexOf("\n");
@@ -192,16 +184,22 @@ public class MainActivity extends AppCompatActivity {
                 dbRefStorage.child(tagString).removeValue();
             }
             // Erase the tag
-            eraseTag(tag);
+            boolean success = nfcUtil.eraseTag(tag);
+            if (success) {
+                statusTextView.setText("");
+                Toast.makeText(this,"Successfully erased tag", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this,"Failed to erase tag", Toast.LENGTH_LONG).show();
+            }
         }
-        statusTextView.setText(readNFC(intent));
+        statusTextView.setText(nfcUtil.readNFC(intent));
         editor = settings.edit();
         editor.putBoolean(getString(R.string.settings_isWriting), false);
-        editor.putBoolean(getString(R.string.settings_isReading), false);
         editor.putBoolean(getString(R.string.settings_isClearing), false);
         editor.commit();
     }
 
+    /*
     private void setNewDate(Tag tag, String tagid, int foodid, int regYear, int regMonth, int regDate, int expYear, int expMonth, int expDate) {
         try {
             // write or overwrite the content on the NFC tag
@@ -292,4 +290,5 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this,"The clear tag is clicked",Toast.LENGTH_LONG).show();
         Log.d(TAG,"This is the clear tag");
     }
+    */
 }

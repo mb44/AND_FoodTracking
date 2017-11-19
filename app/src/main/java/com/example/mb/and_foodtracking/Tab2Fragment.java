@@ -13,12 +13,12 @@ import android.widget.GridView;
 import android.widget.RelativeLayout;
 
 import com.example.mb.and_foodtracking.arrayadapters.FoodTemplateAdapter;
+import com.example.mb.and_foodtracking.model.FoodTemplate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.media.CamcorderProfile.get;
 
 public class Tab2Fragment extends Fragment {
     private static String TAG = "Tab2Fragment";
@@ -62,7 +62,6 @@ public class Tab2Fragment extends Fragment {
         foodTemplates.add(food5);
         foodTemplates.add(food6);
 
-       // MainActivity main = (MainActivity) getActivity();
         context = (MainActivity) getActivity();
 
         // We need an Editor object to make preference changes.
@@ -92,8 +91,6 @@ public class Tab2Fragment extends Fragment {
                     expDate = date;
                 }
         });
-
-        //final TextView appoachTextView = (TextView)view.findViewById(R.id.approach_textview);
 
         // Set listener on GridView
         gridView.setOnItemClickListener( new AdapterView.OnItemClickListener(){

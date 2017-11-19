@@ -25,28 +25,6 @@ public class Tab3Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab3_fragment,container,false);
-
-        /*
-        context = (MainActivity) getActivity();
-        settings = context.getSharedPreferences("pref_file", MODE_PRIVATE);
-        editor = settings.edit();
-        editor.putBoolean(getString(R.string.settings_isWriting), false);
-        editor.putBoolean(getString(R.string.settings_isClearing), true);
-
-        editor.commit();
-        */
-        /*
-        approachNFCTextView = (Button) view.findViewById(R.id.cancelEraseNFCButton);
-
-        approachNFCTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "TESTING BUTTON CLICK 3",Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
-
-
         return view;
     }
 }

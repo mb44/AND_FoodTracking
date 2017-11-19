@@ -1,4 +1,4 @@
-package com.example.mb.and_foodtracking;
+package com.example.mb.and_foodtracking.model;
 
 public class FoodTemplate {
     private int id;
