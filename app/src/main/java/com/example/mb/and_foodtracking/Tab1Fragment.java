@@ -1,13 +1,19 @@
 package com.example.mb.and_foodtracking;
 
+import android.animation.Animator;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.transition.Fade;
+import android.support.transition.Scene;
+import android.support.transition.Transition;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +57,8 @@ public class Tab1Fragment extends Fragment {
     private ArrayList<FoodType> foodTypes;
     private FoodItemAdapter foodItemAdapter;
 
+    private int sceneAnimationDuration;
+
     private NotificationCompat.Builder notification;
 
     @Override
@@ -66,7 +74,8 @@ public class Tab1Fragment extends Fragment {
         showfoodStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                foodStatusLayout.setVisibility(View.VISIBLE);
+                crossFadeLayouts(frontPageLayout, foodStatusLayout);
+                //foodStatusLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -74,7 +83,8 @@ public class Tab1Fragment extends Fragment {
         closeFoodStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                foodStatusLayout.setVisibility(View.GONE);
+                crossFadeLayouts(foodStatusLayout, frontPageLayout);
+                //foodStatusLayout.setVisibility(View.GONE);
             }
         });
 
@@ -202,7 +212,30 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
+        sceneAnimationDuration = context.getResources().getInteger(android.R.integer.config_longAnimTime);
+
         return view;
+    }
+
+    private void crossFadeLayouts(final RelativeLayout src, final RelativeLayout dest) {
+        dest.setAlpha(0);
+        dest.setVisibility(View.VISIBLE);
+
+        dest.animate().alpha(1f).setDuration(sceneAnimationDuration).setListener(null);
+
+        src.animate().alpha(0f).setDuration(sceneAnimationDuration).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {}
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                src.setVisibility(View.GONE);
+            }
+            @Override
+            public void onAnimationCancel(Animator animator) {}
+            @Override
+            public void onAnimationRepeat(Animator animator) {}
+        });
     }
 
     private long daysBetween(Calendar startDate, Calendar endDate) {
