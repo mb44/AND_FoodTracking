@@ -1,7 +1,5 @@
 package com.example.mb.and_foodtracking.model;
 
-import android.support.annotation.NonNull;
-
 public class FoodItem {
     private String tagid;
     private int foodid;
@@ -18,7 +16,7 @@ public class FoodItem {
         this.imgResourceId = -1;
     }
 
-    // This contructor decides what gets serialized/deserialized
+    // This constructor decides what gets serialized/deserialized when sending and retreving from Firebase
     public FoodItem(int foodid, FoodDate registry, FoodDate expiry) {
         this.foodid = foodid;
         this.registry = registry;

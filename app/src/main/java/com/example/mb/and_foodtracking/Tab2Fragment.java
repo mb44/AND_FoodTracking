@@ -73,7 +73,6 @@ public class Tab2Fragment extends Fragment {
         gridView = (GridView)view.findViewById(R.id.foodTemplateView);
         gridView.setNumColumns(2);
         gridView.setAdapter(arrayAdapter);
-        //gridView.setAlpha(0.25f);
 
         setDateLayout = (RelativeLayout)view.findViewById(R.id.setExpDateLayout);
         approachNFCLayout = (RelativeLayout)view.findViewById(R.id.approachNFCLayout);
