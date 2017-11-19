@@ -20,7 +20,7 @@ public class FoodTemplate {
         return name;
     }
 
-    public String getRegDate() {
+    public String getDuration() {
         return duration;
     }
 
