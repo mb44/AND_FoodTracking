@@ -38,15 +38,19 @@ public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
 
     private MainActivity context;
+
+    // Layout
     private RelativeLayout frontPageLayout;
     private RelativeLayout foodStatusLayout;
     private Button showfoodStatusButton;
     private Button closeFoodStatusButton;
     private Spinner sortSpinner;
 
+    // Database
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
 
+    // Lists and adapters
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodType> foodTypes;
     private FoodItemAdapter foodItemAdapter;

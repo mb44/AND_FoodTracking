@@ -27,9 +27,7 @@ public class Tab2Fragment extends Fragment {
     private SharedPreferences settings;
     private SharedPreferences.Editor editor;
 
-    private ArrayList<FoodTemplate>foodTemplates;
-    private FoodTemplateAdapter arrayAdapter;
-
+    // Layout
     private RelativeLayout setDateLayout;
     private RelativeLayout approachNFCLayout;
 
@@ -37,6 +35,11 @@ public class Tab2Fragment extends Fragment {
     private Button okButton;
     private Button cancelButton;
     private Button cancelNFCButton;
+
+    // List and adapter
+    private ArrayList<FoodTemplate>foodTemplates;
+    private FoodTemplateAdapter arrayAdapter;
+
     private int expYear;
     private int expMonth;
     private int expDate;
