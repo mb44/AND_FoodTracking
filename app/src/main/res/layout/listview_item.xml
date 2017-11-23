@@ -5,42 +5,24 @@
     android:background="#ACACD9"
     android:layout_height="100dp">
 
-    <!--
-<ImageView
-    android:id="@+id/item_icon"
-    android:layout_width="match_parent"
-    android:layout_height="180dp"
-    android:padding="4dp"
-    />
-    -->
-
-    <TextView
-        android:id="@+id/tag_id"
-        android:layout_width="60dp"
-        android:layout_height="match_parent"
-        android:padding="5dp"
-        />
-
     <TextView
         android:id="@+id/food_name"
-        android:layout_width="100dp"
+        android:layout_width="130dp"
         android:layout_height="match_parent"
         android:padding="5dp"
         />
 
     <TextView
         android:id="@+id/food_regdate"
-        android:layout_width="100dp"
+        android:layout_width="130dp"
         android:layout_height="match_parent"
         android:padding="5dp"
         />
 
     <TextView
         android:id="@+id/food_expdate"
-        android:layout_width="100dp"
+        android:layout_width="130dp"
         android:layout_height="match_parent"
         android:padding="5dp"
         />
-
-
 </LinearLayout>

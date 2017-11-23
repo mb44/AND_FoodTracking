@@ -1,19 +1,13 @@
 package com.example.mb.and_foodtracking;
 
 import android.animation.Animator;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.transition.Fade;
-import android.support.transition.Scene;
-import android.support.transition.Transition;
-import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
-import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +38,19 @@ public class Tab1Fragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
 
     private MainActivity context;
+
+    // Layout
     private RelativeLayout frontPageLayout;
     private RelativeLayout foodStatusLayout;
     private Button showfoodStatusButton;
     private Button closeFoodStatusButton;
     private Spinner sortSpinner;
 
+    // Database
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
 
+    // Lists and adapters
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodType> foodTypes;
     private FoodItemAdapter foodItemAdapter;
@@ -60,6 +58,8 @@ public class Tab1Fragment extends Fragment {
     private int sceneAnimationDuration;
 
     private NotificationCompat.Builder notification;
+
+    private ValueEventListener databaseEventListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +75,6 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 crossFadeLayouts(frontPageLayout, foodStatusLayout);
-                //foodStatusLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -84,7 +83,6 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 crossFadeLayouts(foodStatusLayout, frontPageLayout);
-                //foodStatusLayout.setVisibility(View.GONE);
             }
         });
 
@@ -182,7 +180,8 @@ public class Tab1Fragment extends Fragment {
 
         foodTypes = new ArrayList<>();
         dbRef = database.getReference();
-        dbRef.addValueEventListener(new ValueEventListener() {
+
+        databaseEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
                 foodTypes.clear();
@@ -204,13 +203,16 @@ public class Tab1Fragment extends Fragment {
                     foodItems.add(item);
                 }
 
-                // Notify users if food expire soon
+                // Notify users if food expire soon (or hve expired)
                 notifyExpiry();
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-        });
+        };
+
+        dbRef.addValueEventListener(databaseEventListener);
 
         sceneAnimationDuration = context.getResources().getInteger(android.R.integer.config_longAnimTime);
 
@@ -238,12 +240,6 @@ public class Tab1Fragment extends Fragment {
         });
     }
 
-    private long daysBetween(Calendar startDate, Calendar endDate) {
-        long end = endDate.getTimeInMillis();
-        long start = startDate.getTimeInMillis();
-        return TimeUnit.MILLISECONDS.toDays(Math.abs(end - start));
-    }
-
     private void notifyExpiry() {
         final Calendar now = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
@@ -256,36 +252,46 @@ public class Tab1Fragment extends Fragment {
             end.set(expYear, expMonth-1, expDate);
 
             long daysDiff = daysBetween(now, end);
+            // Setup notifications
+            notification = new NotificationCompat.Builder(context);
+            notification.setAutoCancel(true);
+            // Builds notifications and issues it
+            NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            if (daysDiff >= 0 && daysDiff <= 1) {
-                // Setup notifications
-                notification = new NotificationCompat.Builder(context);
-                notification.setAutoCancel(true);
-                // Builds notifications and issues it
-                NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notification.setSmallIcon(R.drawable.cow);
+            notification.setTicker("FoodTrack message");
+            notification.setWhen(System.currentTimeMillis());
 
-                notification.setSmallIcon(R.drawable.cow);
-                notification.setTicker("FoodTrack message");
-                notification.setWhen(System.currentTimeMillis());
-
-
-                if (daysDiff < 0) {
-                    notification.setContentTitle("Alert:  " + food.getName()+ " has expired");
-                } else if (daysDiff==0) {
-                    notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) today");
-                } else if (daysDiff==1) {
-                    notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) tomorrow");
-                }
-
-                notification.setContentText("Tag ID: " + food.getTagId());
-
-                Intent intent = new Intent(context, MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                notification.setContentIntent(pendingIntent);
-
-                int uniqueID = UUID.randomUUID().hashCode();
-                nm.notify(uniqueID, notification.build());
+            if (daysDiff < 0) {
+                notification.setContentTitle("Alert:  " + food.getName()+ " has expired");
+            } else if (daysDiff==0) {
+                notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) today");
+            } else if (daysDiff==1) {
+                notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) tomorrow");
             }
+
+            notification.setContentText("Tag ID: " + food.getTagId());
+
+            Intent intent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            notification.setContentIntent(pendingIntent);
+
+            int uniqueID = UUID.randomUUID().hashCode();
+            nm.notify(uniqueID, notification.build());
+        }
+    }
+
+    private long daysBetween(Calendar startDate, Calendar endDate) {
+        long end = endDate.getTimeInMillis();
+        long start = startDate.getTimeInMillis();
+        return TimeUnit.MILLISECONDS.toDays(Math.abs(end - start));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (databaseEventListener != null) {
+            dbRef.removeEventListener(databaseEventListener);
         }
     }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mb.and_foodtracking.R;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 
 public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
     static class ViewHolder {
-        TextView tagIdTextView;
         TextView nameTextView;
         TextView regTextView;
         TextView expTextView;
@@ -36,7 +36,6 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
             // Set tag to use viewHolder later
             convertView.setTag(viewHolder);
 
-            viewHolder.tagIdTextView = convertView.findViewById(R.id.tag_id);
             viewHolder.nameTextView = convertView.findViewById(R.id.food_name);
             viewHolder.regTextView = convertView.findViewById(R.id.food_regdate);
             viewHolder.expTextView =convertView.findViewById(R.id.food_expdate);
@@ -52,7 +51,6 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
         FoodItem currentItem = getItem(position);
 
         if (currentItem != null) {
-            viewHolder.tagIdTextView.setText("Tag id:\n" +currentItem.getTagId());
             viewHolder.nameTextView.setText("Name:\n" + currentItem.getName());
 
             FoodDate regDate = currentItem.getRegistry();
@@ -60,16 +58,6 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
 
             FoodDate expDate = currentItem.getExpiry();
             viewHolder.expTextView.setText("Expiry: " + expDate.getYear()+"/"+expDate.getMonth()+"/"+expDate.getDate() );
-
-            /*
-            int imgResourceId = currentItem.getImgResourceId();
-
-            if (imgResourceId != -1) {
-                ImageView imgView = (ImageView)listItemView.findViewById(R.id.item_icon);
-                imgView.setImageResource(currentItem.getImgResourceId());
-            }
-
-    */
         }
         return convertView;
     }

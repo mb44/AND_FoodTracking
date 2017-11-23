@@ -24,13 +24,10 @@ public class Tab2Fragment extends Fragment {
     private static String TAG = "Tab2Fragment";
 
     private MainActivity context;
-    private Button btnTEST;
     private SharedPreferences settings;
     private SharedPreferences.Editor editor;
 
-    private ArrayList<FoodTemplate>foodTemplates;
-    private FoodTemplateAdapter arrayAdapter;
-
+    // Layout
     private RelativeLayout setDateLayout;
     private RelativeLayout approachNFCLayout;
 
@@ -38,6 +35,11 @@ public class Tab2Fragment extends Fragment {
     private Button okButton;
     private Button cancelButton;
     private Button cancelNFCButton;
+
+    // List and adapter
+    private ArrayList<FoodTemplate>foodTemplates;
+    private FoodTemplateAdapter arrayAdapter;
+
     private int expYear;
     private int expMonth;
     private int expDate;
@@ -84,7 +86,6 @@ public class Tab2Fragment extends Fragment {
             new DatePicker.OnDateChangedListener() {
                 @Override
                 public void onDateChanged(DatePicker datePicker, int year, int month, int date) {
-                    //Toast.makeText(context, "Date: " + date, Toast.LENGTH_SHORT).show();
                     expYear = year;
                     expMonth = month+1;
                     expDate = date;
@@ -133,7 +134,6 @@ public class Tab2Fragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
                 setDateLayout.setVisibility(View.GONE);
                 gridView.setAlpha(1);
             }
