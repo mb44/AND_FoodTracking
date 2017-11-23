@@ -8,23 +8,13 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="Approach NFC Tag to erase data"
+            android:layout_marginBottom="50dp"
             android:textAlignment="center"
             android:textSize="24sp"
-            android:layout_marginTop="55dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            />
-
-        <Button
-            android:id="@+id/cancelEraseNFCButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_below="@id/approachNFCTextView"
-            android:text="Cancel"
             />
 </RelativeLayout>
