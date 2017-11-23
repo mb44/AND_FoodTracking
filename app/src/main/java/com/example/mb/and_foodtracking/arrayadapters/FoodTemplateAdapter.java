@@ -37,17 +37,17 @@ public class FoodTemplateAdapter extends ArrayAdapter<FoodTemplate> {
             // Set tag to use viewHolder later
             convertView.setTag(viewHolder);
 
-            viewHolder.foodNameTextView = convertView.findViewById(R.id.item_text);
-            viewHolder.foodImageView = convertView.findViewById(R.id.item_icon);
+            viewHolder.foodNameTextView = (TextView)convertView.findViewById(R.id.item_text);
+            viewHolder.foodImageView = (ImageView)convertView.findViewById(R.id.item_icon);
         } else {
             // Use the instantiated ViewHolder if the View is already inflatedd
-            viewHolder = (FoodTemplateAdapter.ViewHolder) convertView.getTag();
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         FoodTemplate currentItem = getItem(position);
 
         if (currentItem != null) {
-            viewHolder.foodNameTextView.setText("Tag id:\n" + currentItem.getName());
+            viewHolder.foodNameTextView.setText(currentItem.getName());
 
             int imgResourceId = currentItem.getImgResourceId();
             if (imgResourceId != -1) {

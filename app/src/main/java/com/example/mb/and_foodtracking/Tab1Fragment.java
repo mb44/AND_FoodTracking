@@ -269,9 +269,10 @@ public class Tab1Fragment extends Fragment {
                 notification.setWhen(System.currentTimeMillis());
 
 
-                if (daysDiff==0) {
+                if (daysDiff < 0) {
+                    notification.setContentTitle("Alert:  " + food.getName()+ " has expired");
+                } else if (daysDiff==0) {
                     notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) today");
-
                 } else if (daysDiff==1) {
                     notification.setContentTitle("Alert:  " + food.getName()+ " expire(s) tomorrow");
                 }

@@ -1,8 +1,5 @@
 package com.example.mb.and_foodtracking.model;
 
-/**
- * Created by Mb on 17-11-2017.
- */
 
 public class FoodDate {
     private int year;
@@ -10,9 +7,6 @@ public class FoodDate {
     private int date;
 
     public FoodDate() {
-        this.year = 0;
-        this.month = 0;
-        this.date = 0;
     }
 
     public FoodDate(int year, int month, int date) {

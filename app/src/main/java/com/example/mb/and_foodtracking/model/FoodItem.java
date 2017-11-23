@@ -6,14 +6,8 @@ public class FoodItem {
     private String name;
     private FoodDate registry;
     private FoodDate expiry;
-    private int imgResourceId;
 
     public FoodItem() {
-        this.foodid = 0;
-        this.name = "";
-        this.registry = new FoodDate();
-        this.expiry = new FoodDate();
-        this.imgResourceId = -1;
     }
 
     // This constructor decides what gets serialized/deserialized when sending and retreving from Firebase
@@ -50,9 +44,4 @@ public class FoodItem {
     public FoodDate getExpiry() {
         return expiry;
     }
-
-    public int getImgResourceId() {
-        return imgResourceId;
-    }
-
 }

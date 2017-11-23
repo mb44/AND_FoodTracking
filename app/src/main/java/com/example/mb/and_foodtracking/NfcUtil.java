@@ -79,7 +79,7 @@ public class NfcUtil {
         return res.toString();
     }
 
-    public void writeToNFC(String text, Tag tag) throws IOException, FormatException {
+    private void writeToNFC(String text, Tag tag) throws IOException, FormatException {
         NdefRecord[] records = {createRecord(text)};
         NdefMessage message = new NdefMessage(records);
         Ndef ndef = Ndef.get(tag);

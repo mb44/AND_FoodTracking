@@ -9,10 +9,12 @@
         android:id="@+id/foodTemplateView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:horizontalSpacing="2dp"
+        android:verticalSpacing="6dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -21,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_gravity="center_vertical"
-        android:background="#00FF00"
+        android:background="#EEE"
         android:visibility="gone">
 
         <TextView
@@ -43,7 +45,6 @@
             android:layout_below="@id/setDateTextView"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
-            android:onClick=""
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true">
         </DatePicker>
@@ -74,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_gravity="center_vertical"
-        android:background="#00FF00"
+        android:background="#EEE"
         android:visibility="gone">
 
         <TextView

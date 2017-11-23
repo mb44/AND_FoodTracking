@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mb.and_foodtracking.FoodExpiryService.FoodExpiryService;
 import com.example.mb.and_foodtracking.model.FoodDate;
 import com.example.mb.and_foodtracking.model.FoodItem;
 import com.google.firebase.database.DatabaseReference;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 
-        detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
+        //detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
 
         try {
             ndef.addDataType("*/*");
@@ -77,7 +78,10 @@ public class MainActivity extends AppCompatActivity {
         intentFiltersArray = new IntentFilter[]{ndef, /*ndef2*/ };
         techListArray = new String[][] {new String[]{MifareUltralight.class.getName()}};
 
-        detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
+        //detectedTag = getIntent().getParcelableExtra((NfcAdapter.EXTRA_TAG));
+
+        //Intent serviceIntent = new Intent(this, FoodExpiryService.class);
+        //startService(serviceIntent);
     }
 
     private void  setupViewPager(ViewPager viewPager) {
