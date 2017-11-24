@@ -167,12 +167,15 @@ public class MainActivity extends AppCompatActivity {
             int tagStart = tagText.indexOf("Tag ID: ") + 8;
             // The tag id ends just before a newline
 
-            String tagString = null;
+            String tagId = null;
             // Remove foodItem from Firebase
             if (tagStart > 0) {
-                tagString = tagText.substring(tagStart);
+                database = FirebaseDatabase.getInstance();
+                dbRefStorage = database.getReference().child("Storage");
 
-                dbRefStorage.child(tagString).removeValue();
+                tagId = tagText.substring(tagStart);
+
+                dbRefStorage.child(tagId).removeValue();
             }
             // Erase the tag
             boolean success = nfcUtil.eraseTag(tag);
@@ -182,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this,"Failed to erase tag", Toast.LENGTH_LONG).show();
             }
-        } else {
+        } else if (tag != null){
             final String tagId = nfcUtil.readNFC(intent).substring(8);
 
             database = FirebaseDatabase.getInstance();
@@ -202,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
                                     statusTextView.setText("Food id: " + item.getFoodid() +
                                             "\nRegistry date: " + registry.getYear() + "/" + registry.getMonth() + "/" + registry.getDate() +
                                             "\nExpiry date: " + expiry.getYear() + "/" + expiry.getMonth() + "/" + expiry.getDate());
+
+                                    dbRefStorage.removeEventListener(this);
                                     break;
                                 }
                             }
