@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.mb.and_foodtracking.arrayadapters.FoodTemplateAdapter;
 import com.example.mb.and_foodtracking.model.FoodTemplate;
@@ -110,8 +111,8 @@ public class Tab2Fragment extends Fragment {
             public void onClick(View view) {
                 Calendar c = Calendar.getInstance();
                 int regYear = c.get(Calendar.YEAR);
-                int regMonth = c.get(Calendar.MONTH);
-                int regDate = c.get(Calendar.DAY_OF_WEEK);
+                int regMonth = c.get(Calendar.MONTH) + 1;
+                int regDate = c.get(Calendar.DAY_OF_MONTH);
 
                 editor = settings.edit();
 
