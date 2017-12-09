@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
     static class ViewHolder {
-        TextView tagIdTextView;
         TextView nameTextView;
         TextView regTextView;
         TextView expTextView;
