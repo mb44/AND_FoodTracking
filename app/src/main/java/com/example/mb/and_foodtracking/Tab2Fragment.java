@@ -84,7 +84,6 @@ public class Tab2Fragment extends Fragment {
             new DatePicker.OnDateChangedListener() {
                 @Override
                 public void onDateChanged(DatePicker datePicker, int year, int month, int date) {
-                    //Toast.makeText(context, "Date: " + date, Toast.LENGTH_SHORT).show();
                     expYear = year;
                     expMonth = month+1;
                     expDate = date;

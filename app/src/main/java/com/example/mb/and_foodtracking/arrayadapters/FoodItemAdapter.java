@@ -59,17 +59,7 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
             viewHolder.regTextView.setText("Registry:\n" + regDate.getYear()+"/"+regDate.getMonth()+"/"+regDate.getDate() );
 
             FoodDate expDate = currentItem.getExpiry();
-            viewHolder.expTextView.setText("Expiry: " + expDate.getYear()+"/"+expDate.getMonth()+"/"+expDate.getDate() );
-
-            /*
-            int imgResourceId = currentItem.getImgResourceId();
-
-            if (imgResourceId != -1) {
-                ImageView imgView = (ImageView)listItemView.findViewById(R.id.item_icon);
-                imgView.setImageResource(currentItem.getImgResourceId());
-            }
-
-    */
+            viewHolder.expTextView.setText("Expiry:\n" + expDate.getYear()+"/"+expDate.getMonth()+"/"+expDate.getDate() );
         }
         return convertView;
     }
