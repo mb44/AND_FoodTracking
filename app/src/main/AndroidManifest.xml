@@ -34,9 +34,6 @@
 
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED" android:resource="@xml/techlist"/>
         </activity>
-
-        <!-- Service for FoodTrack. Set exported to false, such that other Apps cannot use our service -->
-        <service android:name=".FoodExpiryService.FoodExpiryService" android:exported="false"/>
     </application>
 
 </manifest>
