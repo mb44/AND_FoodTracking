@@ -8,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.mb.and_foodtracking.model.FoodTemplate;
 import com.example.mb.and_foodtracking.R;
 
 import java.util.ArrayList;
-
 
 public class FoodTemplateAdapter extends ArrayAdapter<FoodTemplate> {
     static class ViewHolder {

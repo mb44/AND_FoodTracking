@@ -23,14 +23,11 @@ public class NfcUtil {
         this.context = context;
     }
 
-    public void setNewDate(Tag tag, String tagid, int foodid, int regYear, int regMonth, int regDate, int expYear, int expMonth, int expDate) {
+    public void setNewTagId(Tag tag, String tagid) {
         try {
             // write or overwrite the content on the NFC tag
             writeToNFC(
-                    "Tag ID: "+ tagid +
-                            "\nFood ID: " + foodid +
-                            "\nRegistry: " + regYear + "/" + regMonth + "/" + regDate +
-                            "\nExpiry: " + expYear + "/" + expMonth + "/" + expDate, tag);
+                    "Tag ID: "+ tagid, tag);
             Toast.makeText(context,"Successfully wrote tag", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();

@@ -36,7 +36,6 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
             // Set tag to use viewHolder later
             convertView.setTag(viewHolder);
 
-            viewHolder.tagIdTextView = convertView.findViewById(R.id.tag_id);
             viewHolder.nameTextView = convertView.findViewById(R.id.food_name);
             viewHolder.regTextView = convertView.findViewById(R.id.food_regdate);
             viewHolder.expTextView =convertView.findViewById(R.id.food_expdate);
@@ -52,7 +51,6 @@ public class FoodItemAdapter extends ArrayAdapter<FoodItem> {
         FoodItem currentItem = getItem(position);
 
         if (currentItem != null) {
-            viewHolder.tagIdTextView.setText("Tag id:\n" +currentItem.getTagId());
             viewHolder.nameTextView.setText("Name:\n" + currentItem.getName());
 
             FoodDate regDate = currentItem.getRegistry();
